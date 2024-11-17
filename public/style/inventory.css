@@ -1,0 +1,23 @@
+#inventory_window
+{
+    position: relative;
+}
+
+#inventory
+{
+    display: grid;
+    grid-template-columns: 1fr;
+    align-content: start;
+
+    position: absolute;
+    background-color: black;
+    width: 341px;
+    height: 480px;
+    top: 36px;
+    left: 5px;
+}
+
+#inventory p
+{
+    position: relative;
+}
