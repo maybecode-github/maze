@@ -15,10 +15,18 @@ class PersonClient {
      * Throws an error if the HTTP request fails.
      */
     async getPerson() {
-        const response = await fetch(this.baseUrl + '/');
+        const response = await fetch(this.baseUrl + '/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+
         if (response.ok) {
             return response.json();
         }
+
         throw new Error("HTTP-Error: " + response.status);
     }
 
