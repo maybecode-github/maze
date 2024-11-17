@@ -1,4 +1,4 @@
-import { gameState, deltaTime, currentRoom } from "./game.js";
+import { gameState, deltaTime, firstRoom } from "./game.js";
 
 window.addEventListener("keydown", keydown);
 window.addEventListener("keyup", keyup);
@@ -37,7 +37,7 @@ async function updatePlayer() {
         gameState.playerY += Math.cos(gameState.playerA) * walkSpeed * run * deltaTime;
 
         // Collision
-        if (currentRoom.map[Math.floor(gameState.playerY) * currentRoom.mapWidth + Math.floor(gameState.playerX)] > 0) {
+        if (firstRoom.map[Math.floor(gameState.playerY) * firstRoom.mapWidth + Math.floor(gameState.playerX)] > 0) {
             gameState.playerX -= Math.sin(gameState.playerA) * walkSpeed * run * deltaTime;
             gameState.playerY -= Math.cos(gameState.playerA) * walkSpeed * run * deltaTime;
         }
@@ -49,7 +49,7 @@ async function updatePlayer() {
         gameState.playerY -= Math.cos(gameState.playerA) * walkSpeed * run * deltaTime;
 
         // Collision
-        if (currentRoom.map[Math.floor(gameState.playerY) * currentRoom.mapWidth + Math.floor(gameState.playerX)] > 0) {
+        if (firstRoom.map[Math.floor(gameState.playerY) * firstRoom.mapWidth + Math.floor(gameState.playerX)] > 0) {
             gameState.playerX += Math.sin(gameState.playerA) * walkSpeed * run * deltaTime;
             gameState.playerY += Math.cos(gameState.playerA) * walkSpeed * run * deltaTime;
         }
@@ -61,7 +61,7 @@ async function updatePlayer() {
         gameState.playerY += Math.sin(gameState.playerA) * strafeSpeed * run * deltaTime;
 
         // Collision
-        if (currentRoom.map[Math.floor(gameState.playerY) * currentRoom.mapWidth + Math.floor(gameState.playerX)] > 0) {
+        if (firstRoom.map[Math.floor(gameState.playerY) * firstRoom.mapWidth + Math.floor(gameState.playerX)] > 0) {
             gameState.playerX += Math.cos(gameState.playerA) * strafeSpeed * run * deltaTime;
             gameState.playerY -= Math.sin(gameState.playerA) * strafeSpeed * run * deltaTime;
         }
@@ -73,7 +73,7 @@ async function updatePlayer() {
         gameState.playerY -= Math.sin(gameState.playerA) * strafeSpeed * run * deltaTime;
 
         // Collision
-        if (currentRoom.map[Math.floor(gameState.playerY) * currentRoom.mapWidth + Math.floor(gameState.playerX)] > 0) {
+        if (firstRoom.map[Math.floor(gameState.playerY) * firstRoom.mapWidth + Math.floor(gameState.playerX)] > 0) {
             gameState.playerX -= Math.cos(gameState.playerA) * strafeSpeed * run * deltaTime;
             gameState.playerY += Math.sin(gameState.playerA) * strafeSpeed * run * deltaTime;
         }

@@ -1,4 +1,4 @@
-import { gameState, currentRoom, depth, fov, steps } from './game.js'; // Importiere gameState statt einzelner Variablen
+import { gameState, firstRoom, depth, fov, steps } from './game.js'; // Importiere gameState statt einzelner Variablen
 
 async function loadTexture(url) {
     const buffer = document.getElementById("buffer");
@@ -35,11 +35,11 @@ async function renderFrame() {
             let testY = Math.floor(gameState.playerY + eyeY * distanceToWall);
 
             // Beam outside of map
-            if (testX < 0 || testX >= currentRoom.mapWidth || testY < 0 || testY >= currentRoom.mapHeight) {
+            if (testX < 0 || testX >= firstRoom.mapWidth || testY < 0 || testY >= firstRoom.mapHeight) {
                 hitWall = true;
                 distanceToWall = depth;
             } else {
-                if (currentRoom.map[testY * currentRoom.mapWidth + testX] > 0) { // Block
+                if (firstRoom.map[testY * firstRoom.mapWidth + testX] > 0) { // Block
                     hitWall = true;
                 }
             }

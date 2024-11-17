@@ -17,7 +17,7 @@ const depth = 61.0;
 const steps = 0.02;
 
 const roomSize = 9;
-let currentRoom;
+let firstRoom;
 
 window.addEventListener("load", load);
 window.addEventListener("unload", unload);
@@ -28,8 +28,12 @@ async function load() {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, screen.width, screen.height);
 
-    currentRoom = new Room(30, 30, roomSize, ['n', 'e', 'w']);
-    currentRoom.renderWalls();
+    let position = await gameClient.positionClient.getPosition();
+
+    firstRoom = new Room(30, 30, roomSize, position.color, position.directions);
+    firstRoom.renderWalls();
+
+
 
     await gameClient.updatePersonInfo();
 }
@@ -43,4 +47,4 @@ async function update() {
     await renderFrame();
 }
 
-export {gameState, currentRoom, depth, fov, steps, deltaTime};
+export {gameState, firstRoom, depth, fov, steps, deltaTime};

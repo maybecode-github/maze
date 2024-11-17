@@ -1,10 +1,11 @@
-import {gameState} from "../test/game.js";
+import {gameState} from "../script/game.js";
 
 class Room {
-    constructor(x, y, roomSize = 3, doorDirections = []) {
+    constructor(x, y, roomSize = 3, color, doorDirections = []) {
         this.mapWidth = 61;
         this.mapHeight = 61;
         this.roomSize = roomSize;
+        this.color = color;
         this.map = Array(this.mapWidth * this.mapHeight).fill(0); // default 0 = empty
         this.createRoom(x, y, doorDirections);
     }
@@ -76,6 +77,7 @@ class Room {
         for (let y = 0; y < this.mapHeight; y++) {
             for (let x = 0; x < this.mapWidth; x++) {
                 if (this.map[y * this.mapWidth + x] === 2) { // wall block
+                    ctx.fillStyle = this.color; // wall color
                     ctx.fillRect(x * 10, y * 10, 10, 10); // draw wall
                 } else if (this.map[y * this.mapWidth + x] === 0) { // door (without wall)
                     ctx.fillStyle = "transparent"; // no wall = door
