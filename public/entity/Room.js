@@ -79,7 +79,7 @@ class Room {
     }
 
     renderWalls() {
-        const screen = document.getElementById("screen");
+        /*const screen = document.getElementById("screen");
         const ctx = screen.getContext("2d");
         ctx.fillRect(0, 0, screen.width, screen.height);
 
@@ -93,7 +93,7 @@ class Room {
                     ctx.fillStyle = "transparent"; // no wall = door
                 }
             }
-        }
+        }*/
     }
 }
 

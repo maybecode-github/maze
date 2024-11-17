@@ -52,7 +52,6 @@ async function unload() {
 async function update() {
     await updatePlayer();
     await renderFrame();
-    console.log(getCurrentRoom());
 }
 
 export {location, firstRoom, depth, fov, steps, deltaTime, wallTexture, rooms};
