@@ -14,7 +14,7 @@ export class PositionClient {
      */
     async getPosition() {
         try {
-            const response = await fetch(this.baseURL + '/', {
+            const response = await fetch(this.baseURL + '/position', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -42,7 +42,7 @@ export class PositionClient {
         }
 
         try {
-            const response = await fetch(this.baseURL + '/thing', {
+            const response = await fetch(this.baseURL + '/position/thing', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -18,7 +18,7 @@ class DoorClient {
             throw new Error("Direction is required to fetch door information.");
         }
 
-        const response = await fetch(this.baseURL + '/' + direction, {
+        const response = await fetch(this.baseURL + '/door/' + direction, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -57,7 +57,7 @@ class DoorClient {
             body.key = key;
         }
 
-        const response = await fetch(this.baseURL + '/' + direction, {
+        const response = await fetch(this.baseURL + '/door/' + direction, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'

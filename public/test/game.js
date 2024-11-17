@@ -1,6 +1,7 @@
 import {Room} from '../entity/Room.js';
 import {renderFrame} from "./render.js";
 import {updatePlayer} from "./controls.js";
+import {gameClient} from "../client/GameClient.js";
 
 let gameState = {
     playerX: 32.0,
@@ -29,6 +30,8 @@ async function load() {
 
     currentRoom = new Room(30, 30, roomSize, ['n', 'e', 'w']);
     currentRoom.renderWalls();
+
+    await gameClient.updatePersonInfo();
 }
 
 async function unload() {

@@ -15,7 +15,7 @@ export class PersonClient {
      * Throws an error if the HTTP request fails.
      */
     async getPerson() {
-        const response = await fetch(this.baseUrl + '/', {
+        const response = await fetch(this.baseUrl + '/person', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -49,7 +49,7 @@ export class PersonClient {
             throw new Error("Invalid direction " + direction + ". Use n, s, w, or e instead.");
         }
 
-        const response = await fetch(this.baseUrl + '/?go=' + direction, {
+        const response = await fetch(this.baseUrl + '/person?go=' + direction, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
@@ -80,7 +80,7 @@ export class PersonClient {
             throw new Error("Thing name is required.");
         }
 
-        const response = await fetch('${this.baseUrl}/thing', {
+        const response = await fetch('${this.baseUrl}/person/thing', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
