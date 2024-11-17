@@ -19,6 +19,13 @@ p
 	left: 12px;
 }
 
+#windows
+{
+	display: grid;
+	grid-template-columns: 1fr auto 3fr;
+	grid-gap: 20px;
+}
+
 #screen_window
 {
 	position: relative;
