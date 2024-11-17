@@ -2,8 +2,9 @@ import {Room} from '../entity/Room.js';
 import {loadTexture, renderFrame} from "./render.js";
 import {updatePlayer} from "./controls.js";
 import {gameClient} from "../client/GameClient.js";
+import {getCurrentRoom} from "./player.js";
 
-let gameState = {
+let location = {
     playerX: 32.0,
     playerY: 32.0,
     playerA: 0.0
@@ -29,12 +30,12 @@ async function load() {
 
     // Create rooms
     firstRoom = new Room(30, 30, roomSize, position.color, position.directions);
-    let secondRoom = new Room(30, 40, roomSize, position.color, position.directions);
-    let thirdRoom = new Room(20, 30, roomSize, position.color, position.directions);
+    let secondRoom = new Room(30, 40, roomSize, "red", position.directions);
+    let thirdRoom = new Room(20, 30, roomSize, "blue", position.directions);
 
     // Set player position only once
-    gameState.playerX = 30 + Math.floor(roomSize / 2);
-    gameState.playerY = 30 + Math.floor(roomSize / 2);
+    location.playerX = 30 + Math.floor(roomSize / 2);
+    location.playerY = 30 + Math.floor(roomSize / 2);
 
     // Render all rooms
     firstRoom.renderWalls();
@@ -51,6 +52,7 @@ async function unload() {
 async function update() {
     await updatePlayer();
     await renderFrame();
+    console.log(getCurrentRoom());
 }
 
-export {gameState, firstRoom, depth, fov, steps, deltaTime, wallTexture, rooms};
+export {location, firstRoom, depth, fov, steps, deltaTime, wallTexture, rooms};

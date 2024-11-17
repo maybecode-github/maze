@@ -1,4 +1,4 @@
-import {gameState, rooms} from "../script/game.js";
+import {location, rooms} from "../script/game.js";
 
 class Room {
 
@@ -25,8 +25,8 @@ class Room {
         this.setWalls(x, y, this.roomSize, doorDirections);
 
         // person in center of the room
-        gameState.playerX = x + Math.floor(this.roomSize / 2);
-        gameState.playerY = y + Math.floor(this.roomSize / 2);
+        location.playerX = x + Math.floor(this.roomSize / 2);
+        location.playerY = y + Math.floor(this.roomSize / 2);
 
         // render walls
         this.renderWalls();

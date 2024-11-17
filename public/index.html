@@ -11,25 +11,26 @@
     <script type="module" src="client/PersonClient.js" async></script>
     <script type="module" src="client/PositionClient.js" async></script>
     <script type="module" src="script/render.js" async></script>
+    <script type="module" src="script/player.js" async></script>
     <link rel="stylesheet" href="style/game.css">
     <link rel="stylesheet" href="style/inventory.css">
 </head>
 <body>
-    <div id="windows">
-        <div id="screen_window">
-            <img src="image/game_window.webp" alt=""/>
-            <p>maze.exe - Alexander Krüger - Phillip Kollwitz</p>
-            <canvas id="screen" width="640" height="480"></canvas>
-        </div>
-        <div id="inventory_window">
-            <img src="image/inventory_window.webp" alt=""/>
-            <p>maze.exe - Inventar</p>
-            <div id="inventory">
+<div id="windows">
+    <div id="screen_window">
+        <img src="image/game_window.webp" alt=""/>
+        <p>maze.exe - Alexander Krüger - Phillip Kollwitz</p>
+        <canvas id="screen" width="640" height="480"></canvas>
+    </div>
+    <div id="inventory_window">
+        <img src="image/inventory_window.webp" alt=""/>
+        <p>maze.exe - Inventar</p>
+        <div id="inventory">
 
-            </div>
         </div>
     </div>
+</div>
 
-    <canvas id="buffer" width="64" height="64"></canvas>
+<canvas id="buffer" width="64" height="64"></canvas>
 </body>
 </html>
