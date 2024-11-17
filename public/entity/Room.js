@@ -1,3 +1,5 @@
+import {gameState} from "../test/game.js";
+
 class Room {
     constructor(x, y, roomSize = 3, doorDirections = []) {
         this.mapWidth = 61;
@@ -12,8 +14,8 @@ class Room {
         this.setWalls(x, y, this.roomSize, doorDirections);
 
         // person in center of the room
-        playerX = x + Math.floor(this.roomSize / 2);
-        playerY = y + Math.floor(this.roomSize / 2);
+        gameState.playerX = x + Math.floor(this.roomSize / 2);
+        gameState.playerY = y + Math.floor(this.roomSize / 2);
 
         // render walls
         this.renderWalls();
@@ -82,3 +84,5 @@ class Room {
         }
     }
 }
+
+export {Room}

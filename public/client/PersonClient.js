@@ -1,6 +1,6 @@
 "use strict";
 
-class PersonClient {
+export class PersonClient {
 
     constructor(baseURL) {
         if (!baseURL) throw new Error("Base URl is required for the PersonClient.")
@@ -99,4 +99,4 @@ class PersonClient {
 
 }
 
-module.exports = PersonClient;
+export default PersonClient

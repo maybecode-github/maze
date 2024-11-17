@@ -1,14 +1,22 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Das Labyrinth</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <script type="module" src="entity/Room.js" async></script>
+    <script type="module" src="test/controls.js" async></script>
+    <script type="module" src="test/game.js" async></script>
+    <script type="module" src="client/PersonClient.js" async></script>
+    <script type="module" src="client/PositionClient.js" async></script>
+    <script type="module" src="test/render.js" async></script>
+    <link rel="stylesheet" href="test/game.css">
 </head>
 <body>
-<h1>Aufgabe 1</h1>
-<p>Implementieren Sie die Aufgabe wie beschrieben in einem eigenen Verzeichnis, das sie nach Ihren Nachnamen benennen,
-z.B. Bella Beispielfrau und Max Mustermann geben ab "beispielfrau_mustermann". Bitte geben Sie nur dieses Verzeichnis ab.</p>
-<p><a href="/api-docs">API-Beschreibung</a></p>
-<p>Prof. Dr. Gero Wedemann, Hochschule Stralsund, Web Engineering 1, WS 2024/25</p>
+<div id="screen_window">
+    <img src="test/game_window.webp"></img>
+    <p>maze.exe - Alexander Krüger - Phillip Kollwitz</p>
+    <canvas id="screen" width="640" height="480"></canvas>
+</div>
 </body>
 </html>

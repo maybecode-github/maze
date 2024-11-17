@@ -1,19 +1,25 @@
-window.addEventListener("load", load);
-window.addEventListener("unload", unload);
+import {Room} from '../entity/Room.js';
+import {renderFrame} from "./render.js";
+import {updatePlayer} from "./controls.js";
+
+let gameState = {
+    playerX: 32.0,
+    playerY: 32.0,
+    playerA: 0.0
+};
+
+
 const updateInterval = window.setInterval(update, 16);
-
-let playerX = 32.0;
-let playerY = 32.0;
-let playerA = 0.0;
-
 const deltaTime = 0.016;
 const fov = 3.14159 / 4.0;
 const depth = 61.0;
 const steps = 0.02;
 
-// create example room
-const roomSize = 9; // room size (example: 3x3)
-let currentRoom = new Room(30, 30, roomSize, ['n', 'e', 'w']); // create room object
+const roomSize = 9;
+let currentRoom;
+
+window.addEventListener("load", load);
+window.addEventListener("unload", unload);
 
 async function load() {
     const screen = document.getElementById("screen");
@@ -21,7 +27,7 @@ async function load() {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, screen.width, screen.height);
 
-    // render walls
+    currentRoom = new Room(30, 30, roomSize, ['n', 'e', 'w']);
     currentRoom.renderWalls();
 }
 
@@ -33,3 +39,5 @@ async function update() {
     await updatePlayer();
     await renderFrame();
 }
+
+export {gameState, currentRoom, depth, fov, steps, deltaTime};

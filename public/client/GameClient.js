@@ -1,7 +1,7 @@
 "use strict";
 
-import PersonClient from "./PersonClient";
-import PositionClient from "./PositionClient";
+import PersonClient from "./PersonClient.js";
+import PositionClient from "./PositionClient.js";
 
 class GameClient {
 
@@ -63,3 +63,4 @@ class GameClient {
 
 // Create a new GameClient instance with the base URL and update interval.
 const gameClient = new GameClient('http://localhost:3000/api', 5000);
+export {gameClient}

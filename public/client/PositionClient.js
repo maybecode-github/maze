@@ -1,6 +1,6 @@
 "use strict";
 
-class PositionClient {
+export class PositionClient {
     constructor(baseURL) {
         if (!baseURL) throw new Error("Base URL is required for the PositionClient.");
         this.baseURL = baseURL;
@@ -60,4 +60,4 @@ class PositionClient {
     }
 }
 
-module.exports = PositionClient;
+export default PositionClient
