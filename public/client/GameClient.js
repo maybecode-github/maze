@@ -7,7 +7,6 @@ class GameClient {
 
     // Add a constructor that takes a baseURL and an updateInterval as parameters.
     constructor(baseURL, updateInterval = 5000) {
-        this.baseURL = baseURL;
         this.updateInterval = updateInterval;
         this.personClient = new PersonClient(baseURL);
         this.positionClient = new PositionClient(baseURL);
@@ -42,7 +41,7 @@ class GameClient {
             const personData = await this.personClient.getPerson();
             console.log("PersonInfo", personData);
         } catch (error) {
-            console.error("Error updating person info:", error);
+            console.error("Error updating person info: ", error);
             o
         }
     }
@@ -56,7 +55,7 @@ class GameClient {
             const positionData = await this.positionClient.getPosition();
             console.log("PositionInfo", positionData);
         } catch (error) {
-            console.error("Error updating position info:", error);
+            console.error("Error updating position info: ", error);
         }
     }
 

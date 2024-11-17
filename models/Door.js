@@ -5,7 +5,7 @@
  * according to exitDirectionRoom1
  * @TODO replace itsOpen etc. by state: alwaysOpen, open, closed, locked and state transitions
  */
-class Door{
+class Door {
     /**
      *
      * @param {exports.Position} room1
@@ -21,10 +21,10 @@ class Door{
     #locked = false;
     #keys = [];
     #oppositeExit = {
-        "n" : "s",
-        "s" : "n",
-        "w" : "e",
-        "e" : "w"
+        "n": "s",
+        "s": "n",
+        "w": "e",
+        "e": "w"
     };
     #room1;
     #room2;
@@ -33,20 +33,20 @@ class Door{
         this.#room1 = room1;
         this.#room2 = room2;
 
-        if ( arguments.length>3 ) {
+        if (arguments.length > 3) {
             this.#closable = itsClosable;
         }
 
-        if ( arguments.length>4 ) {
+        if (arguments.length > 4) {
             if (!itsOpen && !this.#closable) {
                 throw new Error("a not closable door cannot be closed");
             }
             this.#open = itsOpen;
         }
 
-        if (arguments.length >6) {
+        if (arguments.length > 6) {
             if (itsOpen && itsLocked) {
-                throw new Error ("open door cannot be locked");
+                throw new Error("open door cannot be locked");
             }
             this.#locked = itsLocked;
             this.#keys = theKeys;
@@ -56,8 +56,8 @@ class Door{
         if (!(this.#oppositeExit.hasOwnProperty(exitDirectionRoom1))) {
             throw new Error("Not existing direction");
         }
-        room1[exitDirectionRoom1]=this;
-        room2[this.#oppositeExit[exitDirectionRoom1]]=this;
+        room1[exitDirectionRoom1] = this;
+        room2[this.#oppositeExit[exitDirectionRoom1]] = this;
     };
 
     isOpen() {
@@ -71,8 +71,9 @@ class Door{
         if (this.#open) {
             throw new Error("door already open");
         }
-        this.#open=true;
+        this.#open = true;
     };
+
     close() {
         if (!this.#closable) {
             throw new Error("cannot close not closable door");
@@ -87,7 +88,7 @@ class Door{
         return this.#locked;
     };
 
-    lock( key ) {
+    lock(key) {
         if (this.#open) {
             throw Error("cannot lock open door");
         }
@@ -103,7 +104,7 @@ class Door{
         throw Error("wrong key");
     };
 
-    unlock( key ) {
+    unlock(key) {
         if (!this.#locked) {
             throw Error("door already unlocked");
         }
@@ -138,7 +139,7 @@ class Door{
         return {
             "closable": this.#closable,
             "open": this.#open,
-            "locked" : this.#locked
+            "locked": this.#locked
         }
     };
 }
