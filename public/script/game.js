@@ -22,30 +22,35 @@ const steps = 0.01;
 const roomSize = 9;
 let firstRoom;
 
-async function load()
-{
+const rooms = [];
+
+async function load() {
     let position = await gameClient.positionClient.getPosition();
 
+    // Create rooms
     firstRoom = new Room(30, 30, roomSize, position.color, position.directions);
+    let secondRoom = new Room(30, 40, roomSize, position.color, position.directions);
+    let thirdRoom = new Room(20, 30, roomSize, position.color, position.directions);
+
+    // Set player position only once
+    gameState.playerX = 30 + Math.floor(roomSize / 2);
+    gameState.playerY = 30 + Math.floor(roomSize / 2);
+
+    // Render all rooms
     firstRoom.renderWalls();
 
-    await gameClient.updatePersonInfo();
-
-    //load textures
     wallTexture = await loadTexture("./image/brick.png");
 
     updateInterval = window.setInterval(update, 32);
 }
 
-async function unload()
-{
+async function unload() {
     window.clearInterval(updateInterval);
 }
 
-async function update()
-{
+async function update() {
     await updatePlayer();
     await renderFrame();
 }
 
-export {gameState, firstRoom, depth, fov, steps, deltaTime, wallTexture};
+export {gameState, firstRoom, depth, fov, steps, deltaTime, wallTexture, rooms};

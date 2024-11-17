@@ -1,13 +1,23 @@
-import {gameState} from "../script/game.js";
+import {gameState, rooms} from "../script/game.js";
 
 class Room {
+
     constructor(x, y, roomSize = 3, color, doorDirections = []) {
+        this.x = x;
+        this.y = y;
+        this.doorDirections = doorDirections;
         this.mapWidth = 61;
         this.mapHeight = 61;
         this.roomSize = roomSize;
         this.color = color;
         this.map = Array(this.mapWidth * this.mapHeight).fill(0); // default 0 = empty
-        this.createRoom(x, y, doorDirections);
+
+        // add room to rooms array
+        rooms.push(this);
+
+        rooms.forEach(room => {
+            room.createRoom(this.x, this.y, this.doorDirections);
+        });
     }
 
     createRoom(x, y, doorDirections = []) {
@@ -87,4 +97,4 @@ class Room {
     }
 }
 
-export {Room}
+export {Room};
