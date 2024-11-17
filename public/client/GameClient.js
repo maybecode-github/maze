@@ -5,6 +5,9 @@ import PositionClient from "./PositionClient.js";
 
 class GameClient {
 
+    position;
+    person;
+
     // Add a constructor that takes a baseURL and an updateInterval as parameters.
     constructor(baseURL, updateInterval = 5000) {
         this.updateInterval = updateInterval;
@@ -18,6 +21,8 @@ class GameClient {
      * starts regular updates of the person and position info
      */
     startRegularUpdates() {
+        this.update().then(r => console.log("Update successful")).catch(e => console.error("Update failed:", e));
+
         setInterval(() => {
             this.update().then(r => console.log("Update successful")).catch(e => console.error("Update failed:", e));
         }, this.updateInterval);
@@ -39,10 +44,10 @@ class GameClient {
     async updatePersonInfo() {
         try {
             const personData = await this.personClient.getPerson();
+            this.person = personData;
             console.log("PersonInfo", personData);
         } catch (error) {
             console.error("Error updating person info: ", error);
-            o
         }
     }
 
@@ -53,6 +58,7 @@ class GameClient {
     async updatePositionInfo() {
         try {
             const positionData = await this.positionClient.getPosition();
+            this.position = positionData;
             console.log("PositionInfo", positionData);
         } catch (error) {
             console.error("Error updating position info: ", error);

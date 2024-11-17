@@ -1,4 +1,5 @@
-import {gameState, firstRoom, depth, fov, steps, wallTexture} from './game.js'; // Importiere gameState statt einzelner Variablen
+import {gameState, firstRoom, depth, fov, steps, wallTexture} from './game.js';
+import {gameClient} from "../client/GameClient.js"; // Importiere gameState statt einzelner Variablen
 
 const screen = document.getElementById("screen");
 const ctx = document.getElementById("screen").getContext("2d");
@@ -57,7 +58,7 @@ async function renderFrame()
     ctx.fillRect(0, 0, screen.width, screen.height);
     let buffer = ctx.getImageData(0, 0, screen.width, screen.height);
 
-    const floorColor = colorFromName("LimeGreen");
+    const floorColor = colorFromName(gameClient.position.color);
 
     for (let x = 0; x < screen.width; x++)
     {
@@ -138,9 +139,10 @@ async function renderFrame()
             }
             else if (y > floor)
             {
-                buffer.data[(y * screen.width + x) * 4] = floorColor.r - (255 * (distanceToWall * 3 / depth));
-                buffer.data[(y * screen.width + x) * 4 + 1] = floorColor.g - (255 * (distanceToWall * 3 / depth));
-                buffer.data[(y * screen.width + x) * 4 + 2] = floorColor.b - (255 * (distanceToWall * 3/ depth));
+                let sampleY = (y - screen.height / 2) / screen.height;
+                buffer.data[(y * screen.width + x) * 4] = floorColor.r * sampleY;
+                buffer.data[(y * screen.width + x) * 4 + 1] = floorColor.g * sampleY;
+                buffer.data[(y * screen.width + x) * 4 + 2] = floorColor.b * sampleY;
             }
         }
     }
