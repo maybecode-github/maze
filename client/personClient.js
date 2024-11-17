@@ -2,9 +2,9 @@
 
 class PersonClient {
 
-    constructor(baseUrl) {
-        if (!baseUrl) throw new Error("Base URl is required for the PersonClient.")
-        this.baseUrl = baseUrl;
+    constructor(baseURL) {
+        if (!baseURL) throw new Error("Base URl is required for the PersonClient.")
+        this.baseUrl = baseURL;
     }
 
     /**
