@@ -1,54 +1,92 @@
 window.addEventListener("keydown", keydown);
 window.addEventListener("keyup", keyup);
 
-const moveSpeed = 10;
+const walkSpeed = 10;
+const strafeSpeed = 5;
 const lookSpeed = 3;
+const runMultiplier = 2;
+
+let keys = {};
 
 async function keydown(event)
 {
-	keys[event.key] = true;
+	keys[event.key.toLowerCase()] = true;
 }
 
 async function keyup(event)
 {
-	keys[event.key] = false;
+	keys[event.key.toLowerCase()] = false;
 }
 
 async function updatePlayer()
 {
-	//look around
-	if (keys["ArrowLeft"])
+	const run = keys["shift"] ? runMultiplier : 1;
+
+	//look left
+	if (keys["arrowleft"])
 	{
 		playerA -= lookSpeed * deltaTime;
 	}
 
-	if (keys["ArrowRight"])
+	//look right
+	if (keys["arrowright"])
 	{
 		playerA += lookSpeed * deltaTime;
 	}
 
-	//move
-	if (keys["d"] || keys["D"])
+	//move forward
+	if (keys["w"])
 	{
-		playerX += Math.sin(playerA + 90) * moveSpeed * deltaTime;
-		playerY += Math.cos(playerA + 90) * moveSpeed * deltaTime;
+		playerX += Math.sin(playerA) * walkSpeed * run * deltaTime;
+		playerY += Math.cos(playerA) * walkSpeed * run * deltaTime;
+
+		//move back if collision
+		if (currentRoom.map[Math.floor(playerY) * currentRoom.mapWidth + Math.floor(playerX)] > 0)
+		{
+			playerX -= Math.sin(playerA) * walkSpeed * run * deltaTime;
+			playerY -= Math.cos(playerA) * walkSpeed * run * deltaTime;
+		}
 	}
 
-	if (keys["A"] || keys["a"])
+	//move backwards
+	if (keys["s"])
 	{
-		playerX += Math.sin(playerA - 90) * moveSpeed * deltaTime;
-		playerY += Math.cos(playerA - 90) * moveSpeed * deltaTime;
+		playerX -= Math.sin(playerA) * walkSpeed * run * deltaTime;
+		playerY -= Math.cos(playerA) * walkSpeed * run * deltaTime;
+
+		//move back if collision
+		if (currentRoom.map[Math.floor(playerY) * currentRoom.mapWidth + Math.floor(playerX)] > 0)
+		{
+			playerX += Math.sin(playerA) * walkSpeed * run * deltaTime;
+			playerY += Math.cos(playerA) * walkSpeed * run * deltaTime;
+		}
 	}
 
-	if (keys["W"] || keys["w"])
+	//strafe left
+	if (keys["a"])
 	{
-		playerX += Math.sin(playerA) * moveSpeed * deltaTime;
-		playerY += Math.cos(playerA) * moveSpeed * deltaTime;
+		playerX -= Math.cos(playerA) * strafeSpeed * run * deltaTime;
+		playerY += Math.sin(playerA) * strafeSpeed * run * deltaTime;
+
+		//move back if collision
+		if (currentRoom.map[Math.floor(playerY) * currentRoom.mapWidth + Math.floor(playerX)] > 0)
+		{
+			playerX += Math.cos(playerA) * strafeSpeed * run * deltaTime;
+			playerY -= Math.cos(playerA) * strafeSpeed * run * deltaTime;
+		}
 	}
 
-	if (keys["S"] || keys["s"])
+	//strafe right
+	if (keys["d"])
 	{
-		playerX -= Math.sin(playerA) * moveSpeed * deltaTime;
-		playerY -= Math.cos(playerA) * moveSpeed * deltaTime;
+		playerX += Math.cos(playerA) * strafeSpeed * run * deltaTime;
+		playerY -= Math.sin(playerA) * strafeSpeed * run * deltaTime;
+
+		//move back if collision
+		if (currentRoom.map[Math.floor(playerY) * currentRoom.mapWidth + Math.floor(playerX)] > 0)
+		{
+			playerX -= Math.cos(playerA) * strafeSpeed * run * deltaTime;
+			playerY += Math.sin(playerA) * strafeSpeed * run * deltaTime;
+		}
 	}
 }

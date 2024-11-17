@@ -8,7 +8,7 @@ const basicAuth = require('basic-auth-connect');
 const swaggerUi = require('swagger-ui-express');
 const fs = require("fs")
 const YAML = require('yaml')
-const file  = fs.readFileSync('./swagger.yaml', 'utf8')
+const file  = fs.readFileSync('../swagger.yaml', 'utf8')
 const swaggerDocument = YAML.parse(file)
 
 const model = require('./model');

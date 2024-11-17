@@ -1,0 +1,32 @@
+body
+{
+	background-image: url('wallpaper.webp');
+}
+
+img
+{
+	image-rendering: optimizeSpeed;
+}
+
+p
+{
+	font-family: Tahoma, serif;
+	font-weight: bold;
+	font-size: 11pt;
+	color: white;
+	position: absolute;
+	top: -5px;
+	left: 12px;
+}
+
+#screen_window
+{
+	position: relative;
+}
+
+#screen
+{
+	position: absolute;
+	top: 36px;
+	left: 5px;
+}
