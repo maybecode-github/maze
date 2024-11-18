@@ -1,4 +1,4 @@
-import {depth, firstRoom, fov, location, steps, wallTexture} from './game.js';
+import {depth, firstRoom, fov, location, steps, wallTexture, flowerTexture} from './game.js';
 import {getCurrentRoom} from "./player.js";
 
 const screen = document.getElementById("screen");
@@ -51,7 +51,7 @@ function colorFromName(color) {
         "firebrick": "#b22222",
         "floralwhite": "#fffaf0",
         "forestgreen": "#228b22",
-        "fuchsia": "#ff00ff",
+        "fuchsia": "#ff00ff"  ,
         "gainsboro": "#dcdcdc",
         "ghostwhite": "#f8f8ff",
         "gold": "#ffd700",
@@ -160,6 +160,7 @@ function colorFromName(color) {
 async function loadTexture(url) {
     const buffer = document.getElementById("buffer");
     const bufferCtx = buffer.getContext("2d");
+    bufferCtx.clearRect(0, 0, buffer.width, buffer.height);
 
     const image = new Image();
     image.src = url;
@@ -173,6 +174,7 @@ async function renderFrame() {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, screen.width, screen.height);
     let buffer = ctx.getImageData(0, 0, screen.width, screen.height);
+    let depthBuffer = Array(screen.width);
 
     const floorColor = colorFromName(getColorOfCurrentRoom());
 
@@ -220,6 +222,7 @@ async function renderFrame() {
 
         const ceiling = Math.round(screen.height / 2.0 - screen.height / distanceToWall);
         const floor = screen.height - ceiling;
+        depthBuffer[x] = distanceToWall;
 
         for (let y = 0; y < screen.height; y++) {
             if (y > ceiling && y <= floor) {
@@ -240,6 +243,46 @@ async function renderFrame() {
                 buffer.data[(y * screen.width + x) * 4] = floorColor.r * sampleY;
                 buffer.data[(y * screen.width + x) * 4 + 1] = floorColor.g * sampleY;
                 buffer.data[(y * screen.width + x) * 4 + 2] = floorColor.b * sampleY;
+            }
+        }
+    }
+
+    //draw image
+    let vecX = 37.5 - location.playerX;
+    let vecY = 33 - location.playerY;
+    const distanceFromPlayer = Math.sqrt(vecX * vecX + vecY * vecY);
+
+    const eyeX = Math.sin(location.playerA);
+    const eyeY = Math.cos(location.playerA);
+    let objectAngle = Math.atan2(eyeY, eyeX) - Math.atan2(vecY, vecX);
+    if (objectAngle < -3.14159) objectAngle += 2.0 * 3.14159;
+    else if (objectAngle > 3.14159) objectAngle -= 2.0 * 3.14159;
+    const inPlayerFov = Math.abs(objectAngle) < fov / 2.0;
+
+    if (inPlayerFov && distanceFromPlayer >= 0.5 && distanceFromPlayer < 18)
+    {
+        const objectCeiling = (screen.height / 2) - screen.height / distanceFromPlayer;
+        const objectFloor = screen.height - objectCeiling;
+        const objectHeight = objectFloor - objectCeiling;
+        const objectAspectRatio = flowerTexture.height / flowerTexture.width;
+        const objectWidth = objectHeight / objectAspectRatio;
+        const middleOfObject = (0.5 * (objectAngle / (fov / 2)) + 0.5) * screen.width;
+
+        for (let x = 0; x < objectWidth; x++) {
+            for (let y = 0; y < objectHeight; y++) {
+                const sampleX = x / objectWidth;
+                const sampleY = y / objectHeight;
+                const objectColumn = Math.floor(middleOfObject + x - (objectWidth / 2.0));
+                if (objectColumn >= 0 && objectColumn < screen.width)
+                {
+                    const index = (Math.floor(sampleY * flowerTexture.height) * flowerTexture.width + Math.floor(sampleX * flowerTexture.width)) * 4;
+                    if (flowerTexture.data[index + 3] > 20 && depthBuffer[objectColumn] >= distanceFromPlayer)
+                    {
+                        buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4] =  flowerTexture.data[index];
+                        buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 1] = flowerTexture.data[index + 1];
+                        buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 2] = flowerTexture.data[index + 2];
+                    }
+                }
             }
         }
     }

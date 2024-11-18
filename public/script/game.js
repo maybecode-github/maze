@@ -14,6 +14,7 @@ window.addEventListener("load", load);
 window.addEventListener("unload", unload);
 let updateInterval;
 let wallTexture;
+let flowerTexture;
 
 const deltaTime = 0.032;
 const fov = 3.14159 / 4.0;
@@ -41,6 +42,7 @@ async function load() {
     firstRoom.renderWalls();
 
     wallTexture = await loadTexture("./image/brick.png");
+    flowerTexture = await loadTexture("./image/flower.png");
 
     updateInterval = window.setInterval(update, 32);
 }
@@ -54,4 +56,4 @@ async function update() {
     await renderFrame();
 }
 
-export {location, firstRoom, depth, fov, steps, deltaTime, wallTexture, rooms};
+export {location, firstRoom, depth, fov, steps, deltaTime, wallTexture, flowerTexture, rooms};
