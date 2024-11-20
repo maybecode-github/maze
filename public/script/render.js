@@ -53,7 +53,7 @@ function colorFromName(color) {
         "firebrick": "#b22222",
         "floralwhite": "#fffaf0",
         "forestgreen": "#228b22",
-        "fuchsia": "#ff00ff"  ,
+        "fuchsia": "#ff00ff",
         "gainsboro": "#dcdcdc",
         "ghostwhite": "#f8f8ff",
         "gold": "#ffd700",
@@ -159,11 +159,24 @@ function colorFromName(color) {
     return false;
 }
 
-async function loadTextures()
-{
+async function loadTextures() {
     textures.push(await loadTexture("./image/brick.png"));
     textures.push(await loadTexture("./image/flower.png"));
 }
+
+function displayMessage(message) {
+    ctx.fillStyle = "white";
+    ctx.font = "24px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("Drücke E um Tür zu öffnen", screen.width / 2, screen.height / 2);
+}
+
+function isNearDoor(door) {
+    const distance = Math.sqrt(Math.pow(location.playerX - door.x, 2) +
+        Math.pow(location.playerY - door.y, 2));
+    return distance < 3;
+}
+
 
 async function loadTexture(url) {
     const buffer = document.getElementById("buffer");
@@ -301,6 +314,19 @@ async function renderFrame() {
     }*/
 
     ctx.putImageData(buffer, 0, 0);
+
+    const currentRoom = getCurrentRoom();
+    if (currentRoom) {
+        currentRoom.doors.forEach(door => {
+            console.log("DOOR DEBUG", door);
+            const distance = Math.sqrt(Math.pow(location.playerX - door.x, 2) +
+                Math.pow(location.playerY - door.y, 2));
+            if (distance < 3.5) {
+                displayMessage("Drücke E um die Tür zu öffnen!");
+                console.log("door = ", door);
+            }
+        })
+    }
 }
 
 function getColorOfCurrentRoom() {

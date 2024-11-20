@@ -75,4 +75,4 @@ class DoorClient {
 
 }
 
-module.exports = DoorClient;
+export default DoorClient
