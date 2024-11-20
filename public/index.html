@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game</title>
+    <script type="module" src="client/DoorClient.js" async></script>
     <script type="module" src="entity/Room.js" async></script>
     <script type="module" src="script/controls.js" async></script>
     <script type="module" src="script/game.js" async></script>
@@ -15,14 +16,14 @@
     <link rel="stylesheet" href="style/inventory.css">
 </head>
 <body>
-    <div id="windows">
-        <div id="screen_window">
-            <img src="image/game_window.webp" alt=""/>
-            <p>maze.exe - Alexander Krüger - Phillip Kollwitz</p>
-            <canvas id="screen" width="640" height="480"></canvas>
-        </div>
+<div id="windows">
+    <div id="screen_window">
+        <img src="image/game_window.webp" alt=""/>
+        <p>maze.exe - Alexander Krüger - Phillip Kollwitz</p>
+        <canvas id="screen" width="640" height="480"></canvas>
     </div>
+</div>
 
-    <canvas id="buffer" width="64" height="64"></canvas>
+<canvas id="buffer" width="64" height="64"></canvas>
 </body>
 </html>

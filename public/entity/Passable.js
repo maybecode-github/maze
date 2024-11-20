@@ -6,6 +6,14 @@ class Passable {
         this.y = y;
         this.direction = direction;
     }
+
+    getDoor() {
+        return function () {
+            return this.door;
+        }
+    }
+
 }
+
 
 export {Passable};

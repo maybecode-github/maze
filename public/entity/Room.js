@@ -70,7 +70,6 @@ class Room {
                     const northDoorY = roomY;
                     this.map[(roomY * this.mapWidth) + roomX + doorPos] = 0; // north door
                     this.passables.push(new Passable(gameClient.doorClient.getDoor('n'), northDoorX, northDoorY, 'n'));
-                    console.log("DOOR WAS PUSHED");
                     break;
                 case 's':
                     const southDoorX = roomX + doorPos;
@@ -92,6 +91,9 @@ class Room {
                     break;
             }
         });
+        this.passables.forEach(value => {
+            const door = value.getDoor();
+        })
     }
 
     /**

@@ -1,6 +1,6 @@
 import {deltaTime, firstRoom, location} from "./game.js";
 import {dropItem, nextInventorySlot, previousInventorySlot} from "./inventory.js";
-import {getClosestPassable} from "./player.js";
+import {getClosestPassable, switchRoom} from "./player.js";
 import {gameClient} from "../client/GameClient.js";
 
 window.addEventListener("keydown", keydown);
@@ -25,10 +25,12 @@ async function keydown(event) {
             return;
         }
 
+        // standard Blickrichtung süden, nach rechts runter ist Osten
+        // dann norden, dann westen
         let passable = getClosestPassable();
+        console.log("passable", passable);
         passable.door.then(door => {
             if (door.lock) {
-                console.log("door locked");
                 return;
             }
             if (!door.closable) {
@@ -38,13 +40,31 @@ async function keydown(event) {
                 door.close = true;
                 door.open = false;
                 gameClient.doorClient.changeDoorStatus(passable.direction, "close");
-                console.log("door closed")
             } else {
                 door.close = false;
                 door.open = true;
                 gameClient.doorClient.changeDoorStatus(passable.direction, "open");
-                console.log("door opened")
             }
+        });
+    } else if (keyCode === "f") {
+        if (getClosestPassable() == null) {
+            return;
+        }
+
+        let passable = getClosestPassable();
+        passable.door.then(door => {
+            if (door.lock) {
+                return;
+            }
+            if (!door.open) {
+                return;
+            }
+
+            console.log(passable.direction);
+            switchRoom(passable.direction);
+
+            // switch room
+            console.log("YOUR ROOM WAS SWITCHED!");
         });
     }
     //Regular Controls

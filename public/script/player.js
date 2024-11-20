@@ -1,4 +1,8 @@
 import {location, rooms} from "./game.js";
+import {gameClient} from "../client/GameClient.js";
+import {Room} from "../entity/Room.js";
+
+let currentRoom;
 
 function getCurrentRoom() {
     for (let room of rooms) {
@@ -12,7 +16,7 @@ function getCurrentRoom() {
 
 function getClosestPassable() {
     const currentRoom = getCurrentRoom();
-    if(!currentRoom) return null;
+    if (!currentRoom) return null;
 
     return currentRoom.passables.find(passable => isNearDoor(passable));
 }
@@ -23,5 +27,24 @@ function isNearDoor(passable) {
     return distance <= 3.5;
 }
 
+function checkForRoomSwitch() {
+    let currentRoom = getCurrentRoom();
+  //  console.log("current room = ", currentRoom);
+    if (getCurrentRoom() !== currentRoom) {
+        if (getCurrentRoom() === null) {
+            return;
+        }
+        //console.log("PLAYER SWITCHED ROOM");
+        currentRoom = getCurrentRoom();
+    }
+}
+
+export function switchRoom(direction) {
+    gameClient.personClient.movePerson(direction);
+    let position = gameClient.positionClient.getPosition();
+    let newRoom = new Room(40, 30, 9, position);
+}
+
 
 export {getCurrentRoom, isNearDoor, getClosestPassable};
+setInterval(checkForRoomSwitch, 100);

@@ -169,7 +169,7 @@ export async function loadTextures() {
 
 function displayMessage(message) {
     ctx.fillStyle = "white";
-    ctx.font = "24px Arial";
+    ctx.font = "16px Arial";
     ctx.textAlign = "center";
     ctx.fillText(message, screen.width / 2, screen.height / 2);
 }
@@ -340,24 +340,25 @@ export async function renderFrame() {
 
     if (currentRoom) {
         currentRoom.passables.forEach(passable => {
-            if (isNearDoor(passable)) {
-                passable.door.then(door => {
-                    if (door.locked) {
-                        displayMessage("Verschlossen. Schlüssel benötigt! " + door.keys);
-                    } else {
-                        if (!door.closable) {
-                            displayMessage("Tür kann nicht geschlossen werden!");
-                            return;
-                        }
-                        if (door.open) {
-                            displayMessage("Tür offen. Drücke E zum schließen.");
-                        } else {
-                            displayMessage("Drücke E um die Tür zu öffnen!");
-                        }
-                    }
-                })
+            if (!isNearDoor(passable)) {
+                return;
             }
-        })
+            passable.door.then(door => {
+                if (door.locked) {
+                    displayMessage("Verschlossen. Schlüssel benötigt! " + door.keys);
+                } else {
+                    if (!door.closable) {
+                        displayMessage("Tür kann nicht geschlossen werden! Drücke F um hindurch zu gehen.");
+                        return;
+                    }
+                    if (door.open) {
+                        displayMessage("Tür offen. Drücke E zum schließen.\r\nDrücke F um hindurch zu gehen.");
+                    } else {
+                        displayMessage("Drücke E um die Tür zu öffnen!");
+                    }
+                }
+            });
+        });
     }
 }
 

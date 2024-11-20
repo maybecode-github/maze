@@ -46,7 +46,6 @@ class GameClient {
     async updatePersonInfo() {
         try {
             this.person = await this.personClient.getPerson();
-            // console.log("PersonInfo", personData);
         } catch (error) {
             console.error("Error updating person info: ", error);
         }

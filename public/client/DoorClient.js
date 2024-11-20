@@ -30,7 +30,7 @@ class DoorClient {
             throw new Error("HTTP-Error: " + response.status);
         }
 
-        return await response.json();
+        return response.json();
     }
 
     /**
@@ -57,7 +57,6 @@ class DoorClient {
             body.key = key;
         }
 
-        console.log("direction", direction);
         const response = await fetch(this.baseURL + '/door/' + direction, {
             method: 'PATCH',
             headers: {

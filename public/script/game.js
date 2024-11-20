@@ -19,7 +19,7 @@ const fov = 3.14159 / 4.0;
 const depth = 61.0;
 const steps = 0.01;
 
-const roomSize = 9;
+const roomSize = 11;
 let firstRoom;
 
 const rooms = [];
@@ -29,15 +29,10 @@ async function load() {
 
     // Create rooms
     firstRoom = new Room(30, 30, roomSize, position);
-    //let secondRoom = new Room(30, 40, roomSize, "red", position.directions);
-    //let thirdRoom = new Room(20, 30, roomSize, "blue", position.directions);
 
     // Set player position only once
     location.playerX = 30 + Math.floor(roomSize / 2);
     location.playerY = 30 + Math.floor(roomSize / 2);
-
-    // Render all rooms
-    firstRoom.renderWalls();
 
     await loadTextures();
 
