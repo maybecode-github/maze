@@ -1,5 +1,6 @@
 import {depth, firstRoom, fov, location, steps} from './game.js';
 import {getCurrentRoom, isNearDoor} from "./player.js";
+import {gameClient} from "../client/GameClient.js";
 
 const screen = document.getElementById("screen");
 const ctx = document.getElementById("screen").getContext("2d");
@@ -159,11 +160,11 @@ function colorFromName(color) {
     return false;
 }
 
-async function loadTextures() {
-    textures.push({"id": 1, "tex": await loadTexture("./image/brick.png")});
-    textures.push({"id": 2, "tex": await loadTexture("./image/flower.png")});
-    textures.push({"id": 100, "tex": await loadTexture("./image/inv-slot.webp")});
-    textures.push({"id": 101, "tex": await loadTexture("./image/inv-slot-selected.webp")});
+export async function loadTextures() {
+    textures.push({"id": 1, "name": "wall", "tex": await loadTexture("./image/brick.png")});
+    textures.push({"id": 2, "name": "blume", "tex": await loadTexture("./image/flower.png")});
+    textures.push({"id": 100, "name": "inv-slot", "tex": await loadTexture("./image/inv-slot.webp")});
+    textures.push({"id": 101, "name": "inv-slot-selected", "tex": await loadTexture("./image/inv-slot-selected.webp")});
 }
 
 function displayMessage(message) {
@@ -173,9 +174,18 @@ function displayMessage(message) {
     ctx.fillText(message, screen.width / 2, screen.height / 2);
 }
 
-async function getTextureById(id) {
+export async function getTextureById(id) {
     for (let i = 0; i < textures.length; i++) {
         if (textures[i].id === id) return textures[i].tex;
+    }
+
+    return null;
+}
+
+async function getTextureByName(name)
+{
+    for (let i = 0; i < textures.length; i++) {
+        if (textures[i].name.includes(name.toLowerCase())) return textures[i].tex.data;
     }
 
     return null;
@@ -194,7 +204,7 @@ async function loadTexture(url) {
     return {"img": img, "data": bufferCtx.getImageData(0, 0, image.width, image.height)};
 }
 
-async function renderFrame() {
+export async function renderFrame() {
     ctx.beginPath();
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, screen.width, screen.height);
@@ -277,50 +287,56 @@ async function renderFrame() {
         }
     }
 
-    //draw image
-    /*let vecX = 37.5 - location.playerX;
-    let vecY = 33 - location.playerY;
-    const distanceFromPlayer = Math.sqrt(vecX * vecX + vecY * vecY);
-    const fog = 255 * (distanceFromPlayer * 3 / depth);
-
-    const eyeX = Math.sin(location.playerA);
-    const eyeY = Math.cos(location.playerA);
-    let objectAngle = Math.atan2(eyeY, eyeX) - Math.atan2(vecY, vecX);
-    if (objectAngle < -3.14159) objectAngle += 2.0 * 3.14159;
-    else if (objectAngle > 3.14159) objectAngle -= 2.0 * 3.14159;
-    const inPlayerFov = Math.abs(objectAngle) < fov / 2.0;
-
-    if (inPlayerFov && distanceFromPlayer >= 0.5 && distanceFromPlayer < 18)
+    const currentRoom = getCurrentRoom();
+    if (currentRoom != null)
     {
-        const objectCeiling = (screen.height / 2) - screen.height / distanceFromPlayer;
-        const objectFloor = screen.height - objectCeiling;
-        const objectHeight = objectFloor - objectCeiling;
-        const objectAspectRatio = currentTexture.height / currentTexture.width;
-        const objectWidth = objectHeight / objectAspectRatio;
-        const middleOfObject = (0.5 * (objectAngle / (fov / 2)) + 0.5) * screen.width;
+        for (let i = 0; i < gameClient.position.things.length; i++)
+        {
+            let vecX = (currentRoom.x + 1 + currentRoom.roomSize / 2) - location.playerX;
+            let vecY = (currentRoom.y + 1 + currentRoom.roomSize / 2) - location.playerY;
+            const distanceFromPlayer = Math.sqrt(vecX * vecX + vecY * vecY);
+            const fog = 255 * (distanceFromPlayer * 3 / depth);
 
-        for (let x = 0; x < objectWidth; x++) {
-            for (let y = 0; y < objectHeight; y++) {
-                const sampleX = x / objectWidth;
-                const sampleY = y / objectHeight;
-                const objectColumn = Math.floor(middleOfObject + x - (objectWidth / 2.0));
-                if (objectColumn >= 0 && objectColumn < screen.width)
-                {
-                    const index = (Math.floor(sampleY * currentTexture.height) * currentTexture.width + Math.floor(sampleX * currentTexture.width)) * 4;
-                    if (currentTexture.data[index + 3] > 20 && depthBuffer[objectColumn] >= distanceFromPlayer)
-                    {
-                        buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4] =  currentTexture.data[index] - fog;
-                        buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 1] = currentTexture.data[index + 1] - fog;
-                        buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 2] = currentTexture.data[index + 2] - fog;
+            const eyeX = Math.sin(location.playerA);
+            const eyeY = Math.cos(location.playerA);
+            let objectAngle = Math.atan2(eyeY, eyeX) - Math.atan2(vecY, vecX);
+            if (objectAngle < -3.14159) objectAngle += 2.0 * 3.14159;
+            else if (objectAngle > 3.14159) objectAngle -= 2.0 * 3.14159;
+            const inPlayerFov = Math.abs(objectAngle) < fov / 2.0;
+
+            if (inPlayerFov && distanceFromPlayer >= 0.5 && distanceFromPlayer < 18)
+            {
+                const objectTexture = await getTextureByName(gameClient.position.things[i].name);
+                const objectCeiling = (screen.height / 2) - screen.height / distanceFromPlayer;
+                const objectFloor = screen.height - objectCeiling;
+                const objectHeight = objectFloor - objectCeiling;
+                const objectAspectRatio = objectTexture.height / objectTexture.width;
+                const objectWidth = objectHeight / objectAspectRatio;
+                const middleOfObject = (0.5 * (objectAngle / (fov / 2)) + 0.5) * screen.width;
+
+                for (let x = 0; x < objectWidth; x++) {
+                    for (let y = 0; y < objectHeight; y++) {
+                        const sampleX = x / objectWidth;
+                        const sampleY = y / objectHeight;
+                        const objectColumn = Math.floor(middleOfObject + x - (objectWidth / 2.0));
+                        if (objectColumn >= 0 && objectColumn < screen.width)
+                        {
+                            const index = (Math.floor(sampleY * objectTexture.height) * objectTexture.width + Math.floor(sampleX * objectTexture.width)) * 4;
+                            if (objectTexture.data[index + 3] > 20 && depthBuffer[objectColumn] >= distanceFromPlayer)
+                            {
+                                buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4] =  objectTexture.data[index] - fog;
+                                buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 1] = objectTexture.data[index + 1] - fog;
+                                buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 2] = objectTexture.data[index + 2] - fog;
+                            }
+                        }
                     }
                 }
             }
         }
-    }*/
+    }
 
     ctx.putImageData(buffer, 0, 0);
 
-    const currentRoom = getCurrentRoom();
     if (currentRoom) {
         currentRoom.passables.forEach(passable => {
             if (isNearDoor(passable)) {
@@ -350,5 +366,3 @@ function getColorOfCurrentRoom() {
     }
     return "white";
 }
-
-export {renderFrame, loadTextures, getTextureById};

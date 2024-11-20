@@ -10,7 +10,7 @@ async function renderInventory()
     const slot = await getTextureById(100);
     const selectedSlot = await getTextureById(101);
 
-    for (let i = 0; i < 5; i++)
+    for (let i = 0; i < gameClient.position.maximumThings; i++)
     {
         ctx.drawImage(i === selected ? selectedSlot.img : slot.img, (screen.width / 4) + i * 64, screen.height - 64 - 25);
     }
