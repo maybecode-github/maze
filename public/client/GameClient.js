@@ -2,6 +2,7 @@
 
 import PersonClient from "./PersonClient.js";
 import PositionClient from "./PositionClient.js";
+import DoorClient from "./DoorClient.js";
 
 class GameClient {
 
@@ -13,6 +14,7 @@ class GameClient {
         this.updateInterval = updateInterval;
         this.personClient = new PersonClient(baseURL);
         this.positionClient = new PositionClient(baseURL);
+        this.doorClient = new DoorClient(baseURL);
 
         this.startRegularUpdates();
     }
@@ -68,5 +70,5 @@ class GameClient {
 }
 
 // Create a new GameClient instance with the base URL and update interval.
-const gameClient = new GameClient('http://localhost:3000/api', 1000);
+const gameClient = new GameClient('/api', 1000);
 export {gameClient}

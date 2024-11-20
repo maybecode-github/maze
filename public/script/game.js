@@ -27,9 +27,9 @@ async function load() {
     let position = await gameClient.positionClient.getPosition();
 
     // Create rooms
-    firstRoom = new Room(30, 30, roomSize, position.color, position.directions);
-    let secondRoom = new Room(30, 40, roomSize, "red", position.directions);
-    let thirdRoom = new Room(20, 30, roomSize, "blue", position.directions);
+    firstRoom = new Room(30, 30, roomSize, position);
+    //let secondRoom = new Room(30, 40, roomSize, "red", position.directions);
+    //let thirdRoom = new Room(20, 30, roomSize, "blue", position.directions);
 
     // Set player position only once
     location.playerX = 30 + Math.floor(roomSize / 2);
