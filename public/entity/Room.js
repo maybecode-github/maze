@@ -13,7 +13,7 @@ class Room {
         this.mapHeight = 61;
         this.roomSize = roomSize;
         this.color = position.color;
-        this.doors = [];
+        this.passables = [];
         this.map = Array(this.mapWidth * this.mapHeight).fill(0); // default 0 = empty
 
         // add room to rooms array
@@ -69,34 +69,26 @@ class Room {
                     const northDoorX = roomX + doorPos;
                     const northDoorY = roomY;
                     this.map[(roomY * this.mapWidth) + roomX + doorPos] = 0; // north door
-                    // this.doors.push(gameClient.doorClient.getDoor('n'));
-                    //this.doors.push({x: northDoorX, y: northDoorY, direction: 'n'});
-                    this.doors.push(new Passable(gameClient.doorClient.getDoor('n'), northDoorX, northDoorY));
+                    this.passables.push(new Passable(gameClient.doorClient.getDoor('n'), northDoorX, northDoorY, 'n'));
                     console.log("DOOR WAS PUSHED");
                     break;
                 case 's':
                     const southDoorX = roomX + doorPos;
                     const southDoorY = roomY + wallSize - 1;
                     this.map[((roomY + wallSize - 1) * this.mapWidth) + roomX + doorPos] = 0; // south door
-                    //this.doors.push({x: southDoorX, y: southDoorY, direction: 's'});
-                    //this.doors.push(gameClient.doorClient.getDoor('s'));
-                    this.doors.push(new Passable(gameClient.doorClient.getDoor('s'), southDoorX, southDoorY));
+                    this.passables.push(new Passable(gameClient.doorClient.getDoor('s'), southDoorX, southDoorY, 's'));
                     break;
                 case 'w':
                     const westDoorX = roomX;
                     const westDoorY = roomY + doorPos;
                     this.map[((roomY + doorPos) * this.mapWidth) + roomX] = 0; // west door
-                    //  this.doors.push({x: westDoorX, y: westDoorY, direction: 'w'});
-                    //  this.doors.push(gameClient.doorClient.getDoor('w'));
-                    this.doors.push(new Passable(gameClient.doorClient.getDoor('w'), westDoorX, westDoorY));
+                    this.passables.push(new Passable(gameClient.doorClient.getDoor('w'), westDoorX, westDoorY, 'w'));
                     break;
                 case 'e':
                     const eastDoorX = roomX + wallSize - 1;
                     const eastDoorY = roomY + doorPos;
                     this.map[((roomY + doorPos) * this.mapWidth) + roomX + wallSize - 1] = 0; // east door
-                    // this.doors.push({x: eastDoorX, y: eastDoorY, direction: 'e'});
-                    // this.doors.push(gameClient.doorClient.getDoor('e'));
-                    this.doors.push(new Passable(gameClient.doorClient.getDoor('e'), eastDoorX, eastDoorY));
+                    this.passables.push(new Passable(gameClient.doorClient.getDoor('e'), eastDoorX, eastDoorY, 'e'));
                     break;
             }
         });

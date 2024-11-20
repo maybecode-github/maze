@@ -45,9 +45,8 @@ class GameClient {
      */
     async updatePersonInfo() {
         try {
-            const personData = await this.personClient.getPerson();
-            this.person = personData;
-            console.log("PersonInfo", personData);
+            this.person = await this.personClient.getPerson();
+            // console.log("PersonInfo", personData);
         } catch (error) {
             console.error("Error updating person info: ", error);
         }
@@ -59,9 +58,8 @@ class GameClient {
      */
     async updatePositionInfo() {
         try {
-            const positionData = await this.positionClient.getPosition();
-            this.position = positionData;
-            console.log("PositionInfo", positionData);
+            this.position = await this.positionClient.getPosition();
+            //  console.log("PositionInfo", positionData);
         } catch (error) {
             console.error("Error updating position info: ", error);
         }

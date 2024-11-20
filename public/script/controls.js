@@ -1,5 +1,7 @@
-import { location, deltaTime, firstRoom } from "./game.js";
-import {nextInventorySlot, previousInventorySlot, dropItem} from "./inventory.js";
+import {deltaTime, firstRoom, location} from "./game.js";
+import {dropItem, nextInventorySlot, previousInventorySlot} from "./inventory.js";
+import {getClosestPassable} from "./player.js";
+import {gameClient} from "../client/GameClient.js";
 
 window.addEventListener("keydown", keydown);
 window.addEventListener("keyup", keyup);
@@ -15,9 +17,36 @@ async function keydown(event) {
     const keyCode = event.key.toLowerCase();
 
     //Inventory Controls
-    if (keyCode === "arrowup") nextInventorySlot();
-    else if (keyCode === "arrowdown") previousInventorySlot();
-    else if (keyCode === "q") dropItem();
+    if (keyCode === "arrowup") await nextInventorySlot();
+    else if (keyCode === "arrowdown") await previousInventorySlot();
+    else if (keyCode === "q") await dropItem();
+    else if (keyCode === "e") {
+        if (getClosestPassable() == null) {
+            return;
+        }
+
+        let passable = getClosestPassable();
+        passable.door.then(door => {
+            if (door.lock) {
+                console.log("door locked");
+                return;
+            }
+            if (!door.closable) {
+                return;
+            }
+            if (door.open) {
+                door.close = true;
+                door.open = false;
+                gameClient.doorClient.changeDoorStatus(passable.direction, "close");
+                console.log("door closed")
+            } else {
+                door.close = false;
+                door.open = true;
+                gameClient.doorClient.changeDoorStatus(passable.direction, "open");
+                console.log("door opened")
+            }
+        });
+    }
     //Regular Controls
     else keys[keyCode] = true;
 }
@@ -86,6 +115,7 @@ async function updatePlayer() {
             location.playerY += Math.sin(location.playerA) * strafeSpeed * run * deltaTime;
         }
     }
+
 }
 
-export { updatePlayer };
+export {updatePlayer};

@@ -1,8 +1,9 @@
 import {depth, firstRoom, fov, location, steps} from './game.js';
-import {getCurrentRoom} from "./player.js";
+import {getCurrentRoom, isNearDoor} from "./player.js";
 
 const screen = document.getElementById("screen");
 const ctx = document.getElementById("screen").getContext("2d");
+
 let textures = [];
 
 function colorFromName(color) {
@@ -158,25 +159,26 @@ function colorFromName(color) {
     return false;
 }
 
-function displayMessage(message) {
-    ctx.fillStyle = "white";
-    ctx.font = "24px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText("Drücke E um Tür zu öffnen", screen.width / 2, screen.height / 2);
-}
-
-function isNearDoor(door) {
-    const distance = Math.sqrt(Math.pow(location.playerX - door.x, 2) +
-        Math.pow(location.playerY - door.y, 2));
-    return distance < 3;
-}
-
-async function loadTextures()
-{
+async function loadTextures() {
     textures.push({"id": 1, "tex": await loadTexture("./image/brick.png")});
     textures.push({"id": 2, "tex": await loadTexture("./image/flower.png")});
     textures.push({"id": 100, "tex": await loadTexture("./image/inv-slot.webp")});
     textures.push({"id": 101, "tex": await loadTexture("./image/inv-slot-selected.webp")});
+}
+
+function displayMessage(message) {
+    ctx.fillStyle = "white";
+    ctx.font = "24px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(message, screen.width / 2, screen.height / 2);
+}
+
+async function getTextureById(id) {
+    for (let i = 0; i < textures.length; i++) {
+        if (textures[i].id === id) return textures[i].tex;
+    }
+
+    return null;
 }
 
 async function loadTexture(url) {
@@ -192,22 +194,6 @@ async function loadTexture(url) {
     return {"img": img, "data": bufferCtx.getImageData(0, 0, image.width, image.height)};
 }
 
-async function getTextureById(id)
-{
-    for (let i = 0; i < textures.length; i++) {
-        if (textures[i].id === id) return textures[i].tex;
-    }
-
-    return null;
-}
-
-async function getColorOfCurrentRoom() {
-    if (getCurrentRoom() != null) {
-        return getCurrentRoom().color;
-    }
-    return "white";
-}
-
 async function renderFrame() {
     ctx.beginPath();
     ctx.fillStyle = "black";
@@ -215,7 +201,7 @@ async function renderFrame() {
     let buffer = ctx.getImageData(0, 0, screen.width, screen.height);
     let depthBuffer = Array(screen.width);
 
-    const floorColor = colorFromName(await getColorOfCurrentRoom());
+    const floorColor = colorFromName(getColorOfCurrentRoom());
 
     for (let x = 0; x < screen.width; x++) {
         const rayAngle = (location.playerA - fov / 2.0) + (x / screen.width) * fov;
@@ -336,16 +322,33 @@ async function renderFrame() {
 
     const currentRoom = getCurrentRoom();
     if (currentRoom) {
-        currentRoom.doors.forEach(door => {
-            console.log("DOOR DEBUG", door);
-            const distance = Math.sqrt(Math.pow(location.playerX - door.x, 2) +
-                Math.pow(location.playerY - door.y, 2));
-            if (distance < 3.5) {
-                displayMessage("Drücke E um die Tür zu öffnen!");
-                console.log("door = ", door);
+        currentRoom.passables.forEach(passable => {
+            if (isNearDoor(passable)) {
+                passable.door.then(door => {
+                    if (door.locked) {
+                        displayMessage("Verschlossen. Schlüssel benötigt! " + door.keys);
+                    } else {
+                        if (!door.closable) {
+                            displayMessage("Tür kann nicht geschlossen werden!");
+                            return;
+                        }
+                        if (door.open) {
+                            displayMessage("Tür offen. Drücke E zum schließen.");
+                        } else {
+                            displayMessage("Drücke E um die Tür zu öffnen!");
+                        }
+                    }
+                })
             }
         })
     }
+}
+
+function getColorOfCurrentRoom() {
+    if (getCurrentRoom() != null) {
+        return getCurrentRoom().color;
+    }
+    return "white";
 }
 
 export {renderFrame, loadTextures, getTextureById};
