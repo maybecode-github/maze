@@ -176,6 +176,7 @@ async function loadTextures()
     textures.push({"id": 1, "tex": await loadTexture("./image/brick.png")});
     textures.push({"id": 2, "tex": await loadTexture("./image/flower.png")});
     textures.push({"id": 100, "tex": await loadTexture("./image/inv-slot.webp")});
+    textures.push({"id": 101, "tex": await loadTexture("./image/inv-slot-selected.webp")});
 }
 
 async function loadTexture(url) {

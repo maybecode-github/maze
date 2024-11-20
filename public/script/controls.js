@@ -1,4 +1,5 @@
 import { location, deltaTime, firstRoom } from "./game.js";
+import {nextInventorySlot, previousInventorySlot, dropItem} from "./inventory.js";
 
 window.addEventListener("keydown", keydown);
 window.addEventListener("keyup", keyup);
@@ -11,7 +12,14 @@ const runMultiplier = 2;
 let keys = {};
 
 async function keydown(event) {
-    keys[event.key.toLowerCase()] = true;
+    const keyCode = event.key.toLowerCase();
+
+    //Inventory Controls
+    if (keyCode === "arrowup") nextInventorySlot();
+    else if (keyCode === "arrowdown") previousInventorySlot();
+    else if (keyCode === "q") dropItem();
+    //Regular Controls
+    else keys[keyCode] = true;
 }
 
 async function keyup(event) {
