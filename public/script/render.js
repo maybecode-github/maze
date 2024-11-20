@@ -182,8 +182,7 @@ export async function getTextureById(id) {
     return null;
 }
 
-async function getTextureByName(name)
-{
+async function getTextureByName(name) {
     for (let i = 0; i < textures.length; i++) {
         if (textures[i].name.includes(name.toLowerCase())) return textures[i].tex.data;
     }
@@ -288,10 +287,8 @@ export async function renderFrame() {
     }
 
     const currentRoom = getCurrentRoom();
-    if (currentRoom != null)
-    {
-        for (let i = 0; i < gameClient.position.things.length; i++)
-        {
+    if (currentRoom != null) {
+        for (let i = 0; i < gameClient.position.things.length; i++) {
             let angle = i * (360 / gameClient.position.things.length);
             let vecX = (currentRoom.x + 1 + currentRoom.roomSize / 2) + Math.sin(angle) * (currentRoom.roomSize / 4) - location.playerX;
             let vecY = (currentRoom.y + 1 + currentRoom.roomSize / 2) + Math.cos(angle) * (currentRoom.roomSize / 4) - location.playerY;
@@ -305,8 +302,7 @@ export async function renderFrame() {
             else if (objectAngle > 3.14159) objectAngle -= 2.0 * 3.14159;
             const inPlayerFov = Math.abs(objectAngle) < fov / 2.0;
 
-            if (inPlayerFov && distanceFromPlayer >= 0.5 && distanceFromPlayer < 18)
-            {
+            if (inPlayerFov && distanceFromPlayer >= 0.5 && distanceFromPlayer < 18) {
                 const objectTexture = await getTextureByName(gameClient.position.things[i].name);
                 const objectCeiling = (screen.height / 2) - screen.height / distanceFromPlayer;
                 const objectFloor = screen.height - objectCeiling;
@@ -320,12 +316,10 @@ export async function renderFrame() {
                         const sampleX = x / objectWidth;
                         const sampleY = y / objectHeight;
                         const objectColumn = Math.floor(middleOfObject + x - (objectWidth / 2.0));
-                        if (objectColumn >= 0 && objectColumn < screen.width)
-                        {
+                        if (objectColumn >= 0 && objectColumn < screen.width) {
                             const index = (Math.floor(sampleY * objectTexture.height) * objectTexture.width + Math.floor(sampleX * objectTexture.width)) * 4;
-                            if (objectTexture.data[index + 3] > 20 && depthBuffer[objectColumn] >= distanceFromPlayer)
-                            {
-                                buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4] =  objectTexture.data[index] - fog;
+                            if (objectTexture.data[index + 3] > 20 && depthBuffer[objectColumn] >= distanceFromPlayer) {
+                                buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4] = objectTexture.data[index] - fog;
                                 buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 1] = objectTexture.data[index + 1] - fog;
                                 buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 2] = objectTexture.data[index + 2] - fog;
                             }
