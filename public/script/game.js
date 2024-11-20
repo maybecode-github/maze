@@ -1,8 +1,7 @@
 import {Room} from '../entity/Room.js';
-import {loadTexture, renderFrame} from "./render.js";
 import {updatePlayer} from "./controls.js";
 import {gameClient} from "../client/GameClient.js";
-import {getCurrentRoom} from "./player.js";
+import {loadTextures, renderFrame} from "./render.js";
 
 let location = {
     playerX: 32.0,
@@ -13,8 +12,6 @@ let location = {
 window.addEventListener("load", load);
 window.addEventListener("unload", unload);
 let updateInterval;
-let wallTexture;
-let flowerTexture;
 
 const deltaTime = 0.032;
 const fov = 3.14159 / 4.0;
@@ -41,8 +38,7 @@ async function load() {
     // Render all rooms
     firstRoom.renderWalls();
 
-    wallTexture = await loadTexture("./image/brick.png");
-    flowerTexture = await loadTexture("./image/flower.png");
+    await loadTextures();
 
     updateInterval = window.setInterval(update, 32);
 }
@@ -56,4 +52,4 @@ async function update() {
     await renderFrame();
 }
 
-export {location, firstRoom, depth, fov, steps, deltaTime, wallTexture, flowerTexture, rooms};
+export {location, firstRoom, depth, fov, steps, deltaTime, rooms};

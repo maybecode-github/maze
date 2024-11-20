@@ -1,8 +1,10 @@
-import {depth, firstRoom, fov, location, steps, wallTexture, flowerTexture} from './game.js';
+import {depth, firstRoom, fov, location, steps} from './game.js';
 import {getCurrentRoom} from "./player.js";
 
 const screen = document.getElementById("screen");
 const ctx = document.getElementById("screen").getContext("2d");
+
+let textures = [];
 
 function colorFromName(color) {
     const colors = {
@@ -157,6 +159,12 @@ function colorFromName(color) {
     return false;
 }
 
+async function loadTextures()
+{
+    textures.push(await loadTexture("./image/brick.png"));
+    textures.push(await loadTexture("./image/flower.png"));
+}
+
 async function loadTexture(url) {
     const buffer = document.getElementById("buffer");
     const bufferCtx = buffer.getContext("2d");
@@ -187,6 +195,8 @@ async function renderFrame() {
         const eyeY = Math.cos(rayAngle);
         let sampleX = 0.0;
 
+        let currentTexture = null;
+
         while (!hitWall && distanceToWall < depth) {
             distanceToWall += steps;
 
@@ -198,6 +208,7 @@ async function renderFrame() {
                 hitWall = true;
                 distanceToWall = depth;
             } else if (firstRoom.map[testY * firstRoom.mapWidth + testX] > 0) {
+                currentTexture = textures[firstRoom.map[testY * firstRoom.mapWidth + testX] - 1];
                 hitWall = true;
 
                 const blockMidX = testX + 0.5;
@@ -224,15 +235,16 @@ async function renderFrame() {
         const floor = screen.height - ceiling;
         depthBuffer[x] = distanceToWall;
 
+        const fog = 255 * (distanceToWall * 3 / depth);
+
         for (let y = 0; y < screen.height; y++) {
             if (y > ceiling && y <= floor) {
-                if (distanceToWall < depth) {
+                if (distanceToWall < depth && currentTexture != null) {
                     let sampleY = (y - ceiling) / (floor - ceiling);
-                    const index = (Math.floor(sampleY * wallTexture.height) * wallTexture.width + Math.floor(sampleX * wallTexture.width)) * 4;
-                    const fog = 255 * (distanceToWall * 3 / depth);
-                    buffer.data[(y * screen.width + x) * 4] = wallTexture.data[index] - fog;
-                    buffer.data[(y * screen.width + x) * 4 + 1] = wallTexture.data[index + 1] - fog;
-                    buffer.data[(y * screen.width + x) * 4 + 2] = wallTexture.data[index + 2] - fog;
+                    const index = (Math.floor(sampleY * currentTexture.height) * currentTexture.width + Math.floor(sampleX * currentTexture.width)) * 4;
+                    buffer.data[(y * screen.width + x) * 4] = currentTexture.data[index] - fog;
+                    buffer.data[(y * screen.width + x) * 4 + 1] = currentTexture.data[index + 1] - fog;
+                    buffer.data[(y * screen.width + x) * 4 + 2] = currentTexture.data[index + 2] - fog;
                 } else {
                     buffer.data[(y * screen.width + x) * 4] = 0;
                     buffer.data[(y * screen.width + x) * 4 + 1] = 0;
@@ -248,9 +260,10 @@ async function renderFrame() {
     }
 
     //draw image
-    let vecX = 37.5 - location.playerX;
+    /*let vecX = 37.5 - location.playerX;
     let vecY = 33 - location.playerY;
     const distanceFromPlayer = Math.sqrt(vecX * vecX + vecY * vecY);
+    const fog = 255 * (distanceFromPlayer * 3 / depth);
 
     const eyeX = Math.sin(location.playerA);
     const eyeY = Math.cos(location.playerA);
@@ -264,7 +277,7 @@ async function renderFrame() {
         const objectCeiling = (screen.height / 2) - screen.height / distanceFromPlayer;
         const objectFloor = screen.height - objectCeiling;
         const objectHeight = objectFloor - objectCeiling;
-        const objectAspectRatio = flowerTexture.height / flowerTexture.width;
+        const objectAspectRatio = currentTexture.height / currentTexture.width;
         const objectWidth = objectHeight / objectAspectRatio;
         const middleOfObject = (0.5 * (objectAngle / (fov / 2)) + 0.5) * screen.width;
 
@@ -275,17 +288,17 @@ async function renderFrame() {
                 const objectColumn = Math.floor(middleOfObject + x - (objectWidth / 2.0));
                 if (objectColumn >= 0 && objectColumn < screen.width)
                 {
-                    const index = (Math.floor(sampleY * flowerTexture.height) * flowerTexture.width + Math.floor(sampleX * flowerTexture.width)) * 4;
-                    if (flowerTexture.data[index + 3] > 20 && depthBuffer[objectColumn] >= distanceFromPlayer)
+                    const index = (Math.floor(sampleY * currentTexture.height) * currentTexture.width + Math.floor(sampleX * currentTexture.width)) * 4;
+                    if (currentTexture.data[index + 3] > 20 && depthBuffer[objectColumn] >= distanceFromPlayer)
                     {
-                        buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4] =  flowerTexture.data[index];
-                        buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 1] = flowerTexture.data[index + 1];
-                        buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 2] = flowerTexture.data[index + 2];
+                        buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4] =  currentTexture.data[index] - fog;
+                        buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 1] = currentTexture.data[index + 1] - fog;
+                        buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 2] = currentTexture.data[index + 2] - fog;
                     }
                 }
             }
         }
-    }
+    }*/
 
     ctx.putImageData(buffer, 0, 0);
 }
@@ -297,4 +310,4 @@ function getColorOfCurrentRoom() {
     return "white";
 }
 
-export {renderFrame, loadTexture};
+export {renderFrame, loadTextures};

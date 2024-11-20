@@ -39,38 +39,38 @@ class Room {
         // set all walls
         // north wall
         for (let i = 0; i < wallSize; i++) {
-            this.map[(roomY * this.mapWidth) + roomX + i] = 2; // Wand
+            this.map[(roomY * this.mapWidth) + roomX + i] = 1; // Wand
         }
 
         // south wall
         for (let i = 0; i < wallSize; i++) {
-            this.map[((roomY + wallSize - 1) * this.mapWidth) + roomX + i] = 2; // Wand
+            this.map[((roomY + wallSize - 1) * this.mapWidth) + roomX + i] = 1; // Wand
         }
 
         // west wall
         for (let i = 0; i < wallSize; i++) {
-            this.map[((roomY + i) * this.mapWidth) + roomX] = 2; // Wand
+            this.map[((roomY + i) * this.mapWidth) + roomX] = 1; // Wand
         }
 
         // east wall
         for (let i = 0; i < wallSize; i++) {
-            this.map[((roomY + i) * this.mapWidth) + roomX + wallSize - 1] = 2; // Wand
+            this.map[((roomY + i) * this.mapWidth) + roomX + wallSize - 1] = 1; // Wand
         }
 
         // remove walls for door positions
         doorDirections.forEach(direction => {
             switch (direction) {
                 case 'n':
-                    this.map[(roomY * this.mapWidth) + roomX + doorPos] = 0; // Tür nach Norden
+                    this.map[(roomY * this.mapWidth) + roomX + doorPos] = 10; // Tür nach Norden
                     break;
                 case 's':
-                    this.map[((roomY + wallSize - 1) * this.mapWidth) + roomX + doorPos] = 0; // Tür nach Süden
+                    this.map[((roomY + wallSize - 1) * this.mapWidth) + roomX + doorPos] = 10; // Tür nach Süden
                     break;
                 case 'w':
-                    this.map[((roomY + doorPos) * this.mapWidth) + roomX] = 0; // Tür nach Westen
+                    this.map[((roomY + doorPos) * this.mapWidth) + roomX] = 10; // Tür nach Westen
                     break;
                 case 'e':
-                    this.map[((roomY + doorPos) * this.mapWidth) + roomX + wallSize - 1] = 0; // Tür nach Osten
+                    this.map[((roomY + doorPos) * this.mapWidth) + roomX + wallSize - 1] = 10; // Tür nach Osten
                     break;
                 default:
                     console.log("Ungültige Richtung: ", direction);
