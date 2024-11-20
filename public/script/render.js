@@ -292,8 +292,9 @@ export async function renderFrame() {
     {
         for (let i = 0; i < gameClient.position.things.length; i++)
         {
-            let vecX = (currentRoom.x + 1 + currentRoom.roomSize / 2) - location.playerX;
-            let vecY = (currentRoom.y + 1 + currentRoom.roomSize / 2) - location.playerY;
+            let angle = i * (360 / gameClient.position.things.length);
+            let vecX = (currentRoom.x + 1 + currentRoom.roomSize / 2) + Math.sin(angle) * (currentRoom.roomSize / 4) - location.playerX;
+            let vecY = (currentRoom.y + 1 + currentRoom.roomSize / 2) + Math.cos(angle) * (currentRoom.roomSize / 4) - location.playerY;
             const distanceFromPlayer = Math.sqrt(vecX * vecX + vecY * vecY);
             const fog = 255 * (distanceFromPlayer * 3 / depth);
 
