@@ -2,6 +2,7 @@ import {Room} from '../entity/Room.js';
 import {updatePlayer} from "./controls.js";
 import {gameClient} from "../client/GameClient.js";
 import {loadTextures, renderFrame} from "./render.js";
+import {renderInventory} from "./inventory.js";
 
 let location = {
     playerX: 32.0,
@@ -50,6 +51,7 @@ async function unload() {
 async function update() {
     await updatePlayer();
     await renderFrame();
+    await renderInventory();
 }
 
 export {location, firstRoom, depth, fov, steps, deltaTime, rooms};

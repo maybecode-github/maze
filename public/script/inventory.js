@@ -1,13 +1,16 @@
-window.onload = function() {
-    update(["Blume", "Schlüssel"]);
-}
+import {getTextureById} from "./render.js";
+import {gameClient} from "../client/GameClient.js";
 
-function update(things)
+const screen = document.getElementById("screen");
+const ctx = document.getElementById("screen").getContext("2d");
+
+async function renderInventory()
 {
-    const inventory = document.getElementById("inventory");
-
-    for (let i = 0; i < things.length; i++)
+    for (let i = 0; i < 5; i++)
     {
-        inventory.innerHTML += `<p>${things[i]}</p>`;
+        const texture = await getTextureById(100);
+        ctx.drawImage(texture.img, (screen.width / 4) + i * 64, screen.height - 64 - 25);
     }
 }
+
+export {renderInventory};

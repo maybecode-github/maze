@@ -3,7 +3,6 @@ import {getCurrentRoom} from "./player.js";
 
 const screen = document.getElementById("screen");
 const ctx = document.getElementById("screen").getContext("2d");
-
 let textures = [];
 
 function colorFromName(color) {
@@ -159,11 +158,6 @@ function colorFromName(color) {
     return false;
 }
 
-async function loadTextures() {
-    textures.push(await loadTexture("./image/brick.png"));
-    textures.push(await loadTexture("./image/flower.png"));
-}
-
 function displayMessage(message) {
     ctx.fillStyle = "white";
     ctx.font = "24px Arial";
@@ -177,6 +171,12 @@ function isNearDoor(door) {
     return distance < 3;
 }
 
+async function loadTextures()
+{
+    textures.push({"id": 1, "tex": await loadTexture("./image/brick.png")});
+    textures.push({"id": 2, "tex": await loadTexture("./image/flower.png")});
+    textures.push({"id": 100, "tex": await loadTexture("./image/inv-slot.webp")});
+}
 
 async function loadTexture(url) {
     const buffer = document.getElementById("buffer");
@@ -186,8 +186,25 @@ async function loadTexture(url) {
     const image = new Image();
     image.src = url;
     await image.decode();
+    const img = image;
     bufferCtx.drawImage(image, 0, 0, image.width, image.height);
-    return bufferCtx.getImageData(0, 0, image.width, image.height);
+    return {"img": img, "data": bufferCtx.getImageData(0, 0, image.width, image.height)};
+}
+
+async function getTextureById(id)
+{
+    for (let i = 0; i < textures.length; i++) {
+        if (textures[i].id === id) return textures[i].tex;
+    }
+
+    return null;
+}
+
+async function getColorOfCurrentRoom() {
+    if (getCurrentRoom() != null) {
+        return getCurrentRoom().color;
+    }
+    return "white";
 }
 
 async function renderFrame() {
@@ -197,7 +214,7 @@ async function renderFrame() {
     let buffer = ctx.getImageData(0, 0, screen.width, screen.height);
     let depthBuffer = Array(screen.width);
 
-    const floorColor = colorFromName(getColorOfCurrentRoom());
+    const floorColor = colorFromName(await getColorOfCurrentRoom());
 
     for (let x = 0; x < screen.width; x++) {
         const rayAngle = (location.playerA - fov / 2.0) + (x / screen.width) * fov;
@@ -221,7 +238,8 @@ async function renderFrame() {
                 hitWall = true;
                 distanceToWall = depth;
             } else if (firstRoom.map[testY * firstRoom.mapWidth + testX] > 0) {
-                currentTexture = textures[firstRoom.map[testY * firstRoom.mapWidth + testX] - 1];
+                const loadedTexture = await getTextureById(firstRoom.map[testY * firstRoom.mapWidth + testX]);
+                currentTexture = loadedTexture.data;
                 hitWall = true;
 
                 const blockMidX = testX + 0.5;
@@ -329,11 +347,4 @@ async function renderFrame() {
     }
 }
 
-function getColorOfCurrentRoom() {
-    if (getCurrentRoom() != null) {
-        return getCurrentRoom().color;
-    }
-    return "white";
-}
-
-export {renderFrame, loadTextures};
+export {renderFrame, loadTextures, getTextureById};
