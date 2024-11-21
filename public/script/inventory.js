@@ -18,6 +18,14 @@ async function renderInventory() {
     for (let i = 0; i < gameClient.person.things.length; i++) {
         const texture = await getTextureByName(gameClient.person.things[i].name, 100) ?? await getTextureByName("item-generic", 100);
         ctx.drawImage(texture.img, (i % 10) * 64 + ((10 - Math.min(slots, 10)) * 64) / 2, screen.height - 72 - 35);
+
+        if (i === selected)
+        {
+            ctx.fillStyle = "white";
+            ctx.font = "16px Tahoma, serif";
+            ctx.textAlign = "center";
+            ctx.fillText(gameClient.person.things[i].name, (i % 10) * 64 + ((10 - Math.min(slots, 10) + 1) * 64) / 2, screen.height - 12);
+        }
     }
 }
 
