@@ -363,6 +363,9 @@ export async function renderFrame() {
                 return;
             }
             passable.door.then(door => {
+                if (currentRoom !== passable.room) {
+                    return;
+                }
                 if (door.locked) {
                     displayMessage("Verschlossen. Schlüssel benötigt! " + door.keys);
                 } else {

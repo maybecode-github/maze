@@ -1,6 +1,6 @@
 import {location, rooms} from "./game.js";
 import {gameClient} from "../client/GameClient.js";
-import {Room} from "../entity/Room.js";
+import {generateRoomInDirection} from "./generator.js";
 
 let currentRoom;
 
@@ -24,25 +24,24 @@ function getClosestPassable() {
 function isNearDoor(passable) {
     const distance = Math.sqrt(Math.pow(location.playerX - passable.x, 2) +
         Math.pow(location.playerY - passable.y, 2));
-    return distance <= 3.5;
+    return distance <= 2.5;
 }
 
 function checkForRoomSwitch() {
     let currentRoom = getCurrentRoom();
-  //  console.log("current room = ", currentRoom);
     if (getCurrentRoom() !== currentRoom) {
         if (getCurrentRoom() === null) {
             return;
         }
-        //console.log("PLAYER SWITCHED ROOM");
         currentRoom = getCurrentRoom();
     }
 }
 
 export function switchRoom(direction) {
     gameClient.personClient.movePerson(direction);
-    let position = gameClient.positionClient.getPosition();
-    let newRoom = new Room(40, 30, 9, position);
+    gameClient.positionClient.getPosition().then(position => {
+        generateRoomInDirection(position, direction);
+    });
 }
 
 

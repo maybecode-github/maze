@@ -1,16 +1,11 @@
 class Passable {
 
-    constructor(door, x, y, direction) {
+    constructor(door, x, y, direction, room) {
         this.door = door;
         this.x = x;
         this.y = y;
         this.direction = direction;
-    }
-
-    getDoor() {
-        return function () {
-            return this.door;
-        }
+        this.room = room;
     }
 
 }

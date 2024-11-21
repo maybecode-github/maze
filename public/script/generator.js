@@ -1,28 +1,45 @@
 import {getCurrentRoom} from "./player.js";
-import {gameClient} from "../client/GameClient.js";
+import {Room} from "../entity/Room.js";
+import {location, rooms} from "./game.js";
 
-// standard Blickrichtung süden, nach rechts runter ist Osten
-// dann norden, dann westen
-export function generateRoomInDirection(direction) {
+export function generateRoomInDirection(position, direction) {
     let currentRoom = getCurrentRoom();
-   // console.log("current room = ", currentRoom);
+    let roomSize = currentRoom.roomSize;
+    let newX = currentRoom.x;
+    let newY = currentRoom.y;
 
-    let newRoom;
     switch (direction) {
         case 's':
-            newRoom = new Room(currentRoom.x, currentRoom.y + currentRoom.roomSize + 1, currentRoom.roomSize);
-            //
+            newY += roomSize + 2;
             break;
         case 'e':
-            //
+            newX += roomSize + 2;
             break;
         case 'n':
-            //
+            newY -= roomSize + 2;
             break;
         case 'w':
-            //
+            newX -= roomSize + 2;
             break;
         default:
-            console.log("Direction not found");
+            console.log("Ungültige Richtung: ", direction);
+            return null;
     }
+
+    const roomExists = rooms.some(room => room.x === newX && room.y === newY);
+    if (roomExists) {
+        positionPlayerInCenterOfRoom(newX, newY, roomSize);
+        return null;
+    }
+
+    const newRoom = new Room(newX, newY, roomSize, position);
+
+    positionPlayerInCenterOfRoom(newX, newY, roomSize);
+
+    return newRoom;
+}
+
+function positionPlayerInCenterOfRoom(roomX, roomY, roomSize) {
+    location.playerX = roomX + Math.floor(roomSize / 2);
+    location.playerY = roomY + Math.floor(roomSize / 2);
 }

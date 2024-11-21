@@ -69,31 +69,28 @@ class Room {
                     const northDoorX = roomX + doorPos;
                     const northDoorY = roomY;
                     this.map[(roomY * this.mapWidth) + roomX + doorPos] = 0; // north door
-                    this.passables.push(new Passable(gameClient.doorClient.getDoor('n'), northDoorX, northDoorY, 'n'));
+                    this.passables.push(new Passable(gameClient.doorClient.getDoor('n'), northDoorX, northDoorY, 'n', this));
                     break;
                 case 's':
                     const southDoorX = roomX + doorPos;
                     const southDoorY = roomY + wallSize - 1;
                     this.map[((roomY + wallSize - 1) * this.mapWidth) + roomX + doorPos] = 0; // south door
-                    this.passables.push(new Passable(gameClient.doorClient.getDoor('s'), southDoorX, southDoorY, 's'));
+                    this.passables.push(new Passable(gameClient.doorClient.getDoor('s'), southDoorX, southDoorY, 's', this));
                     break;
                 case 'w':
                     const westDoorX = roomX;
                     const westDoorY = roomY + doorPos;
                     this.map[((roomY + doorPos) * this.mapWidth) + roomX] = 0; // west door
-                    this.passables.push(new Passable(gameClient.doorClient.getDoor('w'), westDoorX, westDoorY, 'w'));
+                    this.passables.push(new Passable(gameClient.doorClient.getDoor('w'), westDoorX, westDoorY, 'w', this));
                     break;
                 case 'e':
                     const eastDoorX = roomX + wallSize - 1;
                     const eastDoorY = roomY + doorPos;
                     this.map[((roomY + doorPos) * this.mapWidth) + roomX + wallSize - 1] = 0; // east door
-                    this.passables.push(new Passable(gameClient.doorClient.getDoor('e'), eastDoorX, eastDoorY, 'e'));
+                    this.passables.push(new Passable(gameClient.doorClient.getDoor('e'), eastDoorX, eastDoorY, 'e', this));
                     break;
             }
         });
-        this.passables.forEach(value => {
-            const door = value.getDoor();
-        })
     }
 
     /**

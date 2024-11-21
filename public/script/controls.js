@@ -2,17 +2,55 @@ import {deltaTime, firstRoom, location} from "./game.js";
 import {dropItem, nextInventorySlot, previousInventorySlot} from "./inventory.js";
 import {getClosestPassable, switchRoom} from "./player.js";
 import {gameClient} from "../client/GameClient.js";
-import {closestItem} from "./render.js";
+import {closestItem, renderFrame} from "./render.js";
+import {renderMap} from "./map.js";
 
 window.addEventListener("keydown", keydown);
 window.addEventListener("keyup", keyup);
+window.addEventListener("mousedown", mousedown);
+window.addEventListener("mousemove", mousemove);
+window.addEventListener("mouseup", mouseup);
 
 const walkSpeed = 10;
 const strafeSpeed = 5;
 const lookSpeed = 3;
 const runMultiplier = 2;
+let isMapVisible = false;
+
+let mapOffsetX = 0;
+let mapOffsetY = 0;
+let isDragging = false;
+let dragStartX = 0;
+let dragStartY = 0;
 
 let keys = {};
+
+async function mousedown(event) {
+    if (isMapVisible) {
+        isDragging = true;
+        dragStartX = event.clientX;
+        dragStartY = event.clientY;
+    }
+}
+
+async function mousemove(event) {
+    if (isMapVisible && isDragging) {
+        const dx = event.clientX - dragStartX;
+        const dy = event.clientY - dragStartY;
+
+        mapOffsetX += dx;
+        mapOffsetY += dy;
+
+        dragStartX = event.clientX;
+        dragStartY = event.clientY;
+
+        renderMap();
+    }
+}
+
+async function mouseup(event) {
+    isDragging = false;
+}
 
 async function keydown(event) {
     const keyCode = event.key.toLowerCase();
@@ -72,6 +110,13 @@ async function keydown(event) {
             // switch room
             console.log("YOUR ROOM WAS SWITCHED!");
         });
+    } else if (keyCode === "m") {
+        isMapVisible = !isMapVisible;
+        if (isMapVisible) {
+            renderMap();
+        } else {
+            await renderFrame();
+        }
     }
     //Regular Controls
     else keys[keyCode] = true;
@@ -144,4 +189,4 @@ async function updatePlayer() {
 
 }
 
-export {updatePlayer};
+export {updatePlayer, isMapVisible, mapOffsetY, mapOffsetX};
