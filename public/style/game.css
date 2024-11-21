@@ -24,7 +24,7 @@ p
 #windows
 {
 	display: grid;
-	grid-template-columns: 1fr auto 3fr;
+	grid-template-columns: 1fr 1fr;
 	grid-gap: 20px;
 }
 
@@ -34,7 +34,20 @@ p
 	transform: translate(25%, 25%) scale(1.5);
 }
 
+#map_window
+{
+	position: relative;
+	transform: translate(calc(25% + 20px), 25%) scale(1.5);
+}
+
 #screen
+{
+	position: absolute;
+	top: 36px;
+	left: 5px;
+}
+
+#map
 {
 	position: absolute;
 	top: 36px;

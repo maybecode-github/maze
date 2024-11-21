@@ -3,7 +3,7 @@ import {updatePlayer} from "./controls.js";
 import {gameClient} from "../client/GameClient.js";
 import {loadTextures, renderFrame, setRoomTitle} from "./render.js";
 import {renderInventory} from "./inventory.js";
-import {isMapVisible} from "./controls.js";
+import {renderMap} from "./map.js";
 
 let location = {
     playerX: 32.0,
@@ -25,6 +25,7 @@ const rooms = [];
 async function load() {
     await loadTextures();
     const position = await gameClient.positionClient.getPosition();
+    console.log(position);
     rooms.push(new Room(30, 30, 11, position));
     setRoomTitle(position.name);
     updateInterval = window.setInterval(update, deltaTime * 1000);
@@ -35,12 +36,10 @@ async function unload() {
 }
 
 async function update() {
-    if (isMapVisible) {
-        return;
-    }
     await updatePlayer();
     await renderFrame();
     await renderInventory();
+    await renderMap();
 }
 
 export {location, depth, fov, steps, deltaTime, rooms};

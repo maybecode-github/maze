@@ -10,5 +10,4 @@ class Passable {
 
 }
 
-
 export {Passable};

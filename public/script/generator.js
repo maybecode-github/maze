@@ -33,9 +33,7 @@ export function generateRoomInDirection(position, direction) {
     }
 
     const newRoom = new Room(newX, newY, roomSize, position);
-
     positionPlayerInCenterOfRoom(newX, newY, roomSize);
-
     return newRoom;
 }
 
