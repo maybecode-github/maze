@@ -4,23 +4,25 @@ import {gameClient} from "../client/GameClient.js";
 const screen = document.getElementById("screen");
 const ctx = document.getElementById("screen").getContext("2d");
 let selected = 0;
+let slots = 0;
 
 async function renderInventory() {
+    slots = gameClient.person.things.length;
     const slot = await getTextureById(100);
     const selectedSlot = await getTextureById(101);
 
-    for (let i = 0; i < 5; i++) {
-        ctx.drawImage(i === selected ? selectedSlot.img : slot.img, (screen.width / 4) + i * 64, screen.height - 64 - 25);
+    for (let i = 0; i < slots; i++) {
+        ctx.drawImage(i === selected ? selectedSlot.img : slot.img, (i % 10) * 64 + ((10 - Math.min(slots, 10)) * 64) / 2, screen.height - ((Math.floor(i / 10) + 1) * 64) - 35);
     }
 
     for (let i = 0; i < gameClient.person.things.length; i++) {
         const texture = await getTextureByName(gameClient.person.things[i].name, 100) ?? await getTextureByName("item-generic", 100);
-        ctx.drawImage(texture.img, (screen.width / 4) + i * 64, screen.height - 64 - 33);
+        ctx.drawImage(texture.img, (i % 10) * 64 + ((10 - Math.min(slots, 10)) * 64) / 2, screen.height - 72 - 35);
     }
 }
 
 async function nextInventorySlot() {
-    if (selected < 4) selected++;
+    if (selected < slots - 1) selected++;
 }
 
 async function previousInventorySlot() {

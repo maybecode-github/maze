@@ -182,6 +182,8 @@ export async function loadTextures() {
     textures.push({"id": 102, "name": "item-generic", "tex": await loadTexture("./image/item-generic.webp", 0.8)});
     textures.push({"id": 103, "name": "blume", "tex": await loadTexture("./image/flower.webp", 0.8)});
     textures.push({"id": 104, "name": "schlüssel", "tex": await loadTexture("./image/item-key.webp", 0.8)});
+    //characters
+    textures.push({"id": 200, "name": "character", "tex": await loadTexture("./image/character.webp", 0.8)});
 }
 
 function displayMessage(message) {
