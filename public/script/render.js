@@ -5,6 +5,7 @@ import {gameClient} from "../client/GameClient.js";
 const screen = document.getElementById("screen");
 const ctx = document.getElementById("screen").getContext("2d");
 const textureScale = 4;
+const fogDensity = 3;
 
 let textures = [];
 export let closestItem = null;
@@ -165,6 +166,8 @@ function colorFromName(color) {
 export async function loadTextures() {
     //wall textures
     textures.push({"id": 1, "name": "wall", "tex": await loadTexture("./image/brick.png", 1)});
+    textures.push({"id": 10, "name": "door-open", "tex": await loadTexture("./image/door-open.webp", 1)});
+    textures.push({"id": 11, "name": "door-closed", "tex": await loadTexture("./image/door-closed.webp", 1)});
     //things on ground
     textures.push({"id": 50, "name": "item-generic", "tex": await loadTexture("./image/item-generic.webp", 0.25)});
     textures.push({"id": 51, "name": "blume", "tex": await loadTexture("./image/flower.webp", 0.25)});
@@ -231,19 +234,21 @@ export async function renderFrame() {
         let sampleX = 0.0;
 
         let currentTexture = null;
+        let id = 0;
 
         while (!hitWall && distanceToWall < depth) {
             distanceToWall += steps;
 
             const testX = Math.floor(location.playerX + eyeX * distanceToWall);
             const testY = Math.floor(location.playerY + eyeY * distanceToWall);
+            id = firstRoom.map[testY * firstRoom.mapWidth + testX];
 
             // beam outside of map
             if (testX < 0 || testX >= firstRoom.mapWidth || testY < 0 || testY >= firstRoom.mapHeight) {
                 hitWall = true;
                 distanceToWall = depth;
-            } else if (firstRoom.map[testY * firstRoom.mapWidth + testX] > 0) {
-                const loadedTexture = await getTextureById(firstRoom.map[testY * firstRoom.mapWidth + testX]);
+            } else if (id > 0) {
+                const loadedTexture = await getTextureById(id);
                 currentTexture = loadedTexture.data;
                 hitWall = true;
 
@@ -271,16 +276,18 @@ export async function renderFrame() {
         const floor = screen.height - ceiling;
         depthBuffer[x] = distanceToWall;
 
-        const fog = 255 * (distanceToWall * 3 / depth);
+        const fog = 255 * (distanceToWall * fogDensity / depth);
+        let scale = id < 10 ? textureScale : 1;
 
         for (let y = 0; y < screen.height; y++) {
             if (y > ceiling && y <= floor) {
                 if (distanceToWall < depth && currentTexture != null) {
                     let sampleY = (y - ceiling) / (floor - ceiling);
-                    const index = (Math.floor(sampleY * currentTexture.height * textureScale % currentTexture.height) * currentTexture.width + Math.floor(sampleX * currentTexture.width * textureScale)) * 4;
+                    const index = (Math.floor(sampleY * currentTexture.height * scale % currentTexture.height) * currentTexture.width + Math.floor(sampleX * currentTexture.width * scale % currentTexture.width)) * 4;
                     buffer.data[(y * screen.width + x) * 4] = currentTexture.data[index] - fog;
                     buffer.data[(y * screen.width + x) * 4 + 1] = currentTexture.data[index + 1] - fog;
                     buffer.data[(y * screen.width + x) * 4 + 2] = currentTexture.data[index + 2] - fog;
+                    buffer.data[(y * screen.width + x) * 4 + 3] = currentTexture.data[index + 3];
                 } else {
                     buffer.data[(y * screen.width + x) * 4] = 0;
                     buffer.data[(y * screen.width + x) * 4 + 1] = 0;

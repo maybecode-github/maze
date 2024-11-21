@@ -41,6 +41,8 @@ class Room {
         const wallSize = roomSize + 2;
         const doorPos = Math.floor(wallSize / 2);
 
+        this.map[((roomY + Math.ceil(roomSize / 2)) * this.mapWidth) + roomX + Math.ceil(roomSize / 2)] = 1;
+
         // set all walls
         // north wall
         for (let i = 0; i < wallSize; i++) {
@@ -68,25 +70,25 @@ class Room {
                 case 'n':
                     const northDoorX = roomX + doorPos;
                     const northDoorY = roomY;
-                    this.map[(roomY * this.mapWidth) + roomX + doorPos] = 0; // north door
+                    this.map[(roomY * this.mapWidth) + roomX + doorPos] = 11; // north door
                     this.passables.push(new Passable(gameClient.doorClient.getDoor('n'), northDoorX, northDoorY, 'n', this));
                     break;
                 case 's':
                     const southDoorX = roomX + doorPos;
                     const southDoorY = roomY + wallSize - 1;
-                    this.map[((roomY + wallSize - 1) * this.mapWidth) + roomX + doorPos] = 0; // south door
+                    this.map[((roomY + wallSize - 1) * this.mapWidth) + roomX + doorPos] = 11; // south door
                     this.passables.push(new Passable(gameClient.doorClient.getDoor('s'), southDoorX, southDoorY, 's', this));
                     break;
                 case 'w':
                     const westDoorX = roomX;
                     const westDoorY = roomY + doorPos;
-                    this.map[((roomY + doorPos) * this.mapWidth) + roomX] = 0; // west door
+                    this.map[((roomY + doorPos) * this.mapWidth) + roomX] = 11; // west door
                     this.passables.push(new Passable(gameClient.doorClient.getDoor('w'), westDoorX, westDoorY, 'w', this));
                     break;
                 case 'e':
                     const eastDoorX = roomX + wallSize - 1;
                     const eastDoorY = roomY + doorPos;
-                    this.map[((roomY + doorPos) * this.mapWidth) + roomX + wallSize - 1] = 0; // east door
+                    this.map[((roomY + doorPos) * this.mapWidth) + roomX + wallSize - 1] = 11; // east door
                     this.passables.push(new Passable(gameClient.doorClient.getDoor('e'), eastDoorX, eastDoorY, 'e', this));
                     break;
             }
