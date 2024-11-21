@@ -3,6 +3,7 @@ import {updatePlayer} from "./controls.js";
 import {gameClient} from "../client/GameClient.js";
 import {loadTextures, renderFrame} from "./render.js";
 import {renderInventory} from "./inventory.js";
+import {isMapVisible} from "./controls.js";
 
 let location = {
     playerX: 32.0,
@@ -44,6 +45,9 @@ async function unload() {
 }
 
 async function update() {
+    if (isMapVisible) {
+        return;
+    }
     await updatePlayer();
     await renderFrame();
     await renderInventory();
