@@ -81,8 +81,6 @@ class Room {
             }
         }
 
-        console.log(oldDoorIndex);
-
         switch (direction) {
             case 'n':
                 const northDoorX = this.x + doorPos;
@@ -93,21 +91,21 @@ class Room {
                 break;
             case 's':
                 const southDoorX = this.x + doorPos;
-                const southDoorY = this.x + wallSize - 1;
+                const southDoorY = this.y + wallSize - 1;
                 this.map[((this.y + wallSize - 1) * this.mapWidth) + this.x + doorPos] = doorIndex; // south door
                 if (createPassables === true && oldDoorIndex == null) this.passables.push(new Passable(door, southDoorX, southDoorY, 's', this));
                 else this.passables[oldDoorIndex].door = door;
                 break;
             case 'w':
                 const westDoorX = this.x;
-                const westDoorY = this.x + doorPos;
+                const westDoorY = this.y + doorPos;
                 this.map[((this.y + doorPos) * this.mapWidth) + this.x] = doorIndex; // west door
                 if (createPassables === true && oldDoorIndex == null) this.passables.push(new Passable(door, westDoorX, westDoorY, 'w', this));
                 else this.passables[oldDoorIndex].door = door;
                 break;
             case 'e':
                 const eastDoorX = this.x + wallSize - 1;
-                const eastDoorY = this.x + doorPos;
+                const eastDoorY = this.y + doorPos;
                 this.map[((this.y + doorPos) * this.mapWidth) + this.x + wallSize - 1] = doorIndex; // east door
                 if (createPassables === true && oldDoorIndex == null) this.passables.push(new Passable(door, eastDoorX, eastDoorY, 'e', this));
                 else this.passables[oldDoorIndex].door = door;

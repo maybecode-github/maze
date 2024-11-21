@@ -3,8 +3,6 @@ import {gameClient} from "../client/GameClient.js";
 import {generateRoomInDirection} from "./generator.js";
 import {setRoomTitle} from "./render.js";
 
-let currentRoom;
-
 function getCurrentRoom() {
     for (let room of rooms) {
         if (location.playerX >= room.x && location.playerX <= room.x + 1 + room.roomSize &&
@@ -48,16 +46,6 @@ function isNearDoor(passable) {
     return distance <= 3 && Math.abs(playerA - angle) < 45;
 }
 
-function checkForRoomSwitch() {
-    let currentRoom = getCurrentRoom();
-    if (getCurrentRoom() !== currentRoom) {
-        if (getCurrentRoom() === null) {
-            return;
-        }
-        currentRoom = getCurrentRoom();
-    }
-}
-
 export async function switchRoom(direction) {
     await gameClient.personClient.movePerson(direction);
     gameClient.positionClient.getPosition().then(position => {
@@ -66,6 +54,4 @@ export async function switchRoom(direction) {
     });
 }
 
-
 export {getCurrentRoom, isNearDoor, getClosestPassable};
-setInterval(checkForRoomSwitch, 100);

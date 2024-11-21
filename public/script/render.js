@@ -327,8 +327,9 @@ export async function renderFrame() {
     if (currentRoom != null) {
         for (let i = 0; i < gameClient.position.things.length; i++) {
             let angle = i * (360 / gameClient.position.things.length);
-            let vecX = (currentRoom.x + 1 + currentRoom.roomSize / 2) + Math.sin(angle) * (currentRoom.roomSize / 4) - location.playerX;
-            let vecY = (currentRoom.y + 1 + currentRoom.roomSize / 2) + Math.cos(angle) * (currentRoom.roomSize / 4) - location.playerY;
+            let vecX = ((currentRoom.x + 1 + currentRoom.roomSize / 2) + Math.sin(angle / 180 * 3.14159) * currentRoom.roomSize / 4) - location.playerX;
+            let vecY = ((currentRoom.y + 1 + currentRoom.roomSize / 2) + Math.cos(angle / 180 * 3.14159) * currentRoom.roomSize / 4) - location.playerY;
+
             const distanceFromPlayer = Math.sqrt(vecX * vecX + vecY * vecY);
             const fog = 255 * (distanceFromPlayer * 3 / depth);
 
@@ -379,7 +380,7 @@ export async function renderFrame() {
 
     if (currentRoom) {
         currentRoom.passables.forEach(passable => {
-            if (!isNearDoor(passable) || currentRoom !== passable.room) {
+            if (!isNearDoor(passable)) {
                 return;
             }
 
