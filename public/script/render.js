@@ -1,4 +1,4 @@
-import {depth, firstRoom, fov, location, steps} from './game.js';
+import {depth, fov, location, steps} from './game.js';
 import {getCurrentRoom, isNearDoor} from "./player.js";
 import {gameClient} from "../client/GameClient.js";
 import {wrongKey} from "./controls.js";
@@ -232,6 +232,7 @@ export async function renderFrame() {
     buffer = ctx.getImageData(0, 0, screen.width, screen.height);
 
     const floorColor = colorFromName(getColorOfCurrentRoom());
+    const currentRoom = getCurrentRoom();
 
     for (let x = 0; x < screen.width; x++) {
         const rayAngle = (location.playerA - fov / 2.0) + (x / screen.width) * fov;
@@ -250,10 +251,10 @@ export async function renderFrame() {
 
             const testX = Math.floor(location.playerX + eyeX * distanceToWall);
             const testY = Math.floor(location.playerY + eyeY * distanceToWall);
-            id = firstRoom.map[testY * firstRoom.mapWidth + testX];
+            id = currentRoom.map[testY * currentRoom.mapWidth + testX];
 
             // beam outside of map
-            if (testX < 0 || testX >= firstRoom.mapWidth || testY < 0 || testY >= firstRoom.mapHeight) {
+            if (testX < 0 || testX >= currentRoom.mapWidth || testY < 0 || testY >= currentRoom.mapHeight) {
                 hitWall = true;
                 distanceToWall = depth;
             } else if (id > 0) {
@@ -311,7 +312,6 @@ export async function renderFrame() {
         }
     }
 
-    const currentRoom = getCurrentRoom();
     closestItem = null;
     if (currentRoom != null) {
         for (let i = 0; i < gameClient.position.things.length; i++) {

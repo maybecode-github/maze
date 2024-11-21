@@ -1,6 +1,6 @@
-import {deltaTime, firstRoom, location} from "./game.js";
+import {deltaTime, location} from "./game.js";
 import {dropItem, getItemInHand, nextInventorySlot, previousInventorySlot} from "./inventory.js";
-import {getClosestPassable, switchRoom} from "./player.js";
+import {getClosestPassable, switchRoom, getCurrentRoom} from "./player.js";
 import {gameClient} from "../client/GameClient.js";
 import {closestItem, renderFrame} from "./render.js";
 import {renderMap} from "./map.js";
@@ -162,6 +162,7 @@ async function keyup(event) {
 
 async function updatePlayer() {
     const run = keys["shift"] ? runMultiplier : 1;
+    const currentRoom = getCurrentRoom();
 
     // Look left
     if (keys["arrowleft"]) {
@@ -179,7 +180,7 @@ async function updatePlayer() {
         location.playerY += Math.cos(location.playerA) * walkSpeed * run * deltaTime;
 
         // Collision
-        if (firstRoom.map[Math.floor(location.playerY) * firstRoom.mapWidth + Math.floor(location.playerX)] > 0) {
+        if (currentRoom.map[Math.floor(location.playerY) * currentRoom.mapWidth + Math.floor(location.playerX)] > 0) {
             location.playerX -= Math.sin(location.playerA) * walkSpeed * run * deltaTime;
             location.playerY -= Math.cos(location.playerA) * walkSpeed * run * deltaTime;
         }
@@ -191,7 +192,7 @@ async function updatePlayer() {
         location.playerY -= Math.cos(location.playerA) * walkSpeed * run * deltaTime;
 
         // Collision
-        if (firstRoom.map[Math.floor(location.playerY) * firstRoom.mapWidth + Math.floor(location.playerX)] > 0) {
+        if (currentRoom.map[Math.floor(location.playerY) * currentRoom.mapWidth + Math.floor(location.playerX)] > 0) {
             location.playerX += Math.sin(location.playerA) * walkSpeed * run * deltaTime;
             location.playerY += Math.cos(location.playerA) * walkSpeed * run * deltaTime;
         }
@@ -203,7 +204,7 @@ async function updatePlayer() {
         location.playerY += Math.sin(location.playerA) * strafeSpeed * run * deltaTime;
 
         // Collision
-        if (firstRoom.map[Math.floor(location.playerY) * firstRoom.mapWidth + Math.floor(location.playerX)] > 0) {
+        if (currentRoom.map[Math.floor(location.playerY) * currentRoom.mapWidth + Math.floor(location.playerX)] > 0) {
             location.playerX += Math.cos(location.playerA) * strafeSpeed * run * deltaTime;
             location.playerY -= Math.sin(location.playerA) * strafeSpeed * run * deltaTime;
         }
@@ -215,7 +216,7 @@ async function updatePlayer() {
         location.playerY -= Math.sin(location.playerA) * strafeSpeed * run * deltaTime;
 
         // Collision
-        if (firstRoom.map[Math.floor(location.playerY) * firstRoom.mapWidth + Math.floor(location.playerX)] > 0) {
+        if (currentRoom.map[Math.floor(location.playerY) * currentRoom.mapWidth + Math.floor(location.playerX)] > 0) {
             location.playerX -= Math.cos(location.playerA) * strafeSpeed * run * deltaTime;
             location.playerY += Math.sin(location.playerA) * strafeSpeed * run * deltaTime;
         }

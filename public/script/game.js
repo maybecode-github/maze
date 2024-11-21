@@ -1,7 +1,7 @@
 import {Room} from '../entity/Room.js';
 import {updatePlayer} from "./controls.js";
 import {gameClient} from "../client/GameClient.js";
-import {loadTextures, renderFrame} from "./render.js";
+import {loadTextures, renderFrame, setRoomTitle} from "./render.js";
 import {renderInventory} from "./inventory.js";
 import {isMapVisible} from "./controls.js";
 
@@ -20,23 +20,13 @@ const fov = 3.14159 / 4.0;
 const depth = 61.0;
 const steps = 0.01;
 
-const roomSize = 11;
-let firstRoom;
-
 const rooms = [];
 
 async function load() {
-    let position = await gameClient.positionClient.getPosition();
-
-    // Create rooms
-    firstRoom = new Room(30, 30, roomSize, position);
-
-    // Set player position only once
-    location.playerX = 30 + Math.floor(roomSize / 2);
-    location.playerY = 30 + Math.floor(roomSize / 2);
-
     await loadTextures();
-
+    const position = await gameClient.positionClient.getPosition();
+    rooms.push(new Room(30, 30, 11, position));
+    setRoomTitle(position.name);
     updateInterval = window.setInterval(update, deltaTime * 1000);
 }
 
@@ -53,4 +43,4 @@ async function update() {
     await renderInventory();
 }
 
-export {location, firstRoom, depth, fov, steps, deltaTime, rooms};
+export {location, depth, fov, steps, deltaTime, rooms};
