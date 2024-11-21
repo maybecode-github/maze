@@ -173,7 +173,11 @@ export async function loadTextures() {
     textures.push({"id": 51, "name": "blume", "tex": await loadTexture("./image/flower.webp", 0.25)});
     //items in inventory
     textures.push({"id": 100, "name": "inv-slot", "tex": await loadTexture("./image/inv-slot.webp", 1)});
-    textures.push({"id": 101, "name": "inv-slot-selected", "tex": await loadTexture("./image/inv-slot-selected.webp", 1)});
+    textures.push({
+        "id": 101,
+        "name": "inv-slot-selected",
+        "tex": await loadTexture("./image/inv-slot-selected.webp", 1)
+    });
     textures.push({"id": 102, "name": "item-generic", "tex": await loadTexture("./image/item-generic.webp", 0.8)});
     textures.push({"id": 102, "name": "blume", "tex": await loadTexture("./image/flower.webp", 0.8)});
 }
@@ -193,8 +197,7 @@ export async function getTextureById(id) {
     return null;
 }
 
-export async function getTextureByName(name, offset)
-{
+export async function getTextureByName(name, offset) {
     for (let i = 0; i < textures.length; i++) {
         if (textures[i].id >= offset && textures[i].name.includes(name.toLowerCase())) return textures[i].tex;
     }
@@ -304,10 +307,8 @@ export async function renderFrame() {
 
     const currentRoom = getCurrentRoom();
     closestItem = null;
-    if (currentRoom != null)
-    {
-        for (let i = 0; i < gameClient.position.things.length; i++)
-        {
+    if (currentRoom != null) {
+        for (let i = 0; i < gameClient.position.things.length; i++) {
             let angle = i * (360 / gameClient.position.things.length);
             let vecX = (currentRoom.x + 1 + currentRoom.roomSize / 2) + Math.sin(angle) * (currentRoom.roomSize / 4) - location.playerX;
             let vecY = (currentRoom.y + 1 + currentRoom.roomSize / 2) + Math.cos(angle) * (currentRoom.roomSize / 4) - location.playerY;
@@ -321,10 +322,8 @@ export async function renderFrame() {
             else if (objectAngle > 3.14159) objectAngle -= 2.0 * 3.14159;
             const inPlayerFov = Math.abs(objectAngle) < fov / 2.0;
 
-            if (inPlayerFov && distanceFromPlayer >= 0.5 && distanceFromPlayer < 18)
-            {
-                if (distanceFromPlayer < 2)
-                {
+            if (inPlayerFov && distanceFromPlayer >= 0.5 && distanceFromPlayer < 18) {
+                if (distanceFromPlayer < 2) {
                     closestItem = gameClient.position.things[i].name;
                 }
 
@@ -341,12 +340,10 @@ export async function renderFrame() {
                         const sampleX = x / objectWidth;
                         const sampleY = y / objectHeight;
                         const objectColumn = Math.floor(middleOfObject + x - (objectWidth / 2.0));
-                        if (objectColumn >= 0 && objectColumn < screen.width)
-                        {
+                        if (objectColumn >= 0 && objectColumn < screen.width) {
                             const index = (Math.floor(sampleY * objectTexture.data.height) * objectTexture.data.width + Math.floor(sampleX * objectTexture.data.width)) * 4;
-                            if (objectTexture.data.data[index + 3] > 20 && depthBuffer[objectColumn] >= distanceFromPlayer)
-                            {
-                                buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4] =  objectTexture.data.data[index] - fog;
+                            if (objectTexture.data.data[index + 3] > 20 && depthBuffer[objectColumn] >= distanceFromPlayer) {
+                                buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4] = objectTexture.data.data[index] - fog;
                                 buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 1] = objectTexture.data.data[index + 1] - fog;
                                 buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 2] = objectTexture.data.data[index + 2] - fog;
                             }
@@ -359,8 +356,7 @@ export async function renderFrame() {
 
     ctx.putImageData(buffer, 0, 0);
 
-    if (closestItem != null)
-    {
+    if (closestItem != null) {
         displayMessage(closestItem);
     }
 
@@ -374,7 +370,7 @@ export async function renderFrame() {
                     return;
                 }
                 if (door.locked) {
-                    displayMessage("Verschlossen. Schlüssel benötigt! " + door.keys);
+                    displayMessage("Verschlossen. Schlüssel benötigt! Drücke G zum aufschließen/abschließen.");
                 } else {
                     if (!door.closable) {
                         displayMessage("Tür kann nicht geschlossen werden! Drücke F um hindurch zu gehen.");

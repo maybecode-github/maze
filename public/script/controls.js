@@ -1,5 +1,5 @@
 import {deltaTime, firstRoom, location} from "./game.js";
-import {dropItem, nextInventorySlot, previousInventorySlot} from "./inventory.js";
+import {dropItem, getItemInHand, nextInventorySlot, previousInventorySlot} from "./inventory.js";
 import {getClosestPassable, switchRoom} from "./player.js";
 import {gameClient} from "../client/GameClient.js";
 import {closestItem, renderFrame} from "./render.js";
@@ -59,9 +59,44 @@ async function keydown(event) {
     if (keyCode === "arrowup") await nextInventorySlot();
     else if (keyCode === "arrowdown") await previousInventorySlot();
     else if (keyCode === "q") await dropItem();
-    else if (keyCode === "e") {
-        if (closestItem != null)
-        {
+    else if (keyCode === "g") {
+        let passable = getClosestPassable();
+        passable.door.then(door => {
+            if (door.locked) {
+                if (getItemInHand() == null) {
+                    return;
+                }
+                getItemInHand().then(item => {
+                    gameClient.doorClient.changeDoorStatus(passable.direction, "unlock", item.name)
+                        .then(() => {
+                            door.locked = false;
+                        })
+                        .catch(error => {
+                            if (error.message.includes("HTTP-Error: 422")) {
+                                console.log("falsches item");
+                            } else {
+                                console.error("Error unlocking door:", error);
+                            }
+                        });
+                });
+            } else {
+                getItemInHand().then(item => {
+                    gameClient.doorClient.changeDoorStatus(passable.direction, "lock", item.name)
+                        .then(() => {
+                            door.locked = true;
+                        })
+                        .catch(error => {
+                            if (error.message.includes("HTTP-Error: 422")) {
+                                console.log("falsches item");
+                            } else {
+                                console.error("Error unlocking door:", error);
+                            }
+                        });
+                });
+            }
+        });
+    } else if (keyCode === "e") {
+        if (closestItem != null) {
             await gameClient.personClient.takeThing(closestItem);
         }
 
@@ -69,12 +104,9 @@ async function keydown(event) {
             return;
         }
 
-        // standard Blickrichtung süden, nach rechts runter ist Osten
-        // dann norden, dann westen
         let passable = getClosestPassable();
-        console.log("passable", passable);
         passable.door.then(door => {
-            if (door.lock) {
+            if (door.locked) {
                 return;
             }
             if (!door.closable) {
@@ -97,18 +129,13 @@ async function keydown(event) {
 
         let passable = getClosestPassable();
         passable.door.then(door => {
-            if (door.lock) {
+            if (door.locked) {
                 return;
             }
             if (!door.open) {
                 return;
             }
-
-            console.log(passable.direction);
             switchRoom(passable.direction);
-
-            // switch room
-            console.log("YOUR ROOM WAS SWITCHED!");
         });
     } else if (keyCode === "m") {
         isMapVisible = !isMapVisible;

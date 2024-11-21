@@ -32,9 +32,6 @@ class Room {
         // person in center of the room
         location.playerX = x + Math.floor(this.roomSize / 2);
         location.playerY = y + Math.floor(this.roomSize / 2);
-
-        // render walls
-        this.renderWalls();
     }
 
     setWalls(roomX, roomY, roomSize, doorDirections) {
@@ -93,27 +90,6 @@ class Room {
                     break;
             }
         });
-    }
-
-    /**
-     * method to generate map from top view
-     */
-    renderWalls() {
-        /*const screen = document.getElementById("screen");
-        const ctx = screen.getContext("2d");
-        ctx.fillRect(0, 0, screen.width, screen.height);
-
-        // render walls
-        for (let y = 0; y < this.mapHeight; y++) {
-            for (let x = 0; x < this.mapWidth; x++) {
-                if (this.map[y * this.mapWidth + x] === 2) { // wall block
-                    ctx.fillStyle = this.color; // wall color
-                    ctx.fillRect(x * 10, y * 10, 10, 10); // draw wall
-                } else if (this.map[y * this.mapWidth + x] === 0) { // door (without wall)
-                    ctx.fillStyle = "transparent"; // no wall = door
-                }
-            }
-        }*/
     }
 }
 

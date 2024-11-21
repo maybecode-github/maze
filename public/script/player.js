@@ -24,7 +24,7 @@ function getClosestPassable() {
 function isNearDoor(passable) {
     const distance = Math.sqrt(Math.pow(location.playerX - passable.x, 2) +
         Math.pow(location.playerY - passable.y, 2));
-    return distance <= 2.5;
+    return distance <= 2.2;
 }
 
 function checkForRoomSwitch() {
