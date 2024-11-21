@@ -9,6 +9,8 @@ const textureScale = 4;
 const fogDensity = 3;
 
 let textures = [];
+let buffer = Array(screen.width * screen.height * 4);
+let depthBuffer = Array(screen.width);
 export let closestItem = null;
 
 function colorFromName(color) {
@@ -172,15 +174,13 @@ export async function loadTextures() {
     //things on ground
     textures.push({"id": 50, "name": "item-generic", "tex": await loadTexture("./image/item-generic.webp", 0.25)});
     textures.push({"id": 51, "name": "blume", "tex": await loadTexture("./image/flower.webp", 0.25)});
+    textures.push({"id": 52, "name": "schlüssel", "tex": await loadTexture("./image/item-key.webp", 0.25)});
     //items in inventory
     textures.push({"id": 100, "name": "inv-slot", "tex": await loadTexture("./image/inv-slot.webp", 1)});
-    textures.push({
-        "id": 101,
-        "name": "inv-slot-selected",
-        "tex": await loadTexture("./image/inv-slot-selected.webp", 1)
-    });
+    textures.push({"id": 101, "name": "inv-slot-selected", "tex": await loadTexture("./image/inv-slot-selected.webp", 1)});
     textures.push({"id": 102, "name": "item-generic", "tex": await loadTexture("./image/item-generic.webp", 0.8)});
-    textures.push({"id": 102, "name": "blume", "tex": await loadTexture("./image/flower.webp", 0.8)});
+    textures.push({"id": 103, "name": "blume", "tex": await loadTexture("./image/flower.webp", 0.8)});
+    textures.push({"id": 104, "name": "schlüssel", "tex": await loadTexture("./image/item-key.webp", 0.8)});
 }
 
 function displayMessage(message) {
@@ -188,6 +188,12 @@ function displayMessage(message) {
     ctx.font = "16px Tahoma, serif";
     ctx.textAlign = "center";
     ctx.fillText(message, screen.width / 2, screen.height / 2);
+}
+
+export function setRoomTitle(title)
+{
+    const screenTitle = document.getElementById("screen_title");
+    screenTitle.textContent = `maze.exe - ${title}`;
 }
 
 export async function getTextureById(id) {
@@ -223,8 +229,7 @@ export async function renderFrame() {
     ctx.beginPath();
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, screen.width, screen.height);
-    let buffer = ctx.getImageData(0, 0, screen.width, screen.height);
-    let depthBuffer = Array(screen.width);
+    buffer = ctx.getImageData(0, 0, screen.width, screen.height);
 
     const floorColor = colorFromName(getColorOfCurrentRoom());
 

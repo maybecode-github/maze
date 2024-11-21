@@ -15,7 +15,7 @@ window.addEventListener("load", load);
 window.addEventListener("unload", unload);
 let updateInterval;
 
-const deltaTime = 0.032;
+const deltaTime = 0.016;
 const fov = 3.14159 / 4.0;
 const depth = 61.0;
 const steps = 0.01;
@@ -37,7 +37,7 @@ async function load() {
 
     await loadTextures();
 
-    updateInterval = window.setInterval(update, 32);
+    updateInterval = window.setInterval(update, deltaTime * 1000);
 }
 
 async function unload() {

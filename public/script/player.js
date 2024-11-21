@@ -1,6 +1,7 @@
 import {location, rooms} from "./game.js";
 import {gameClient} from "../client/GameClient.js";
 import {generateRoomInDirection} from "./generator.js";
+import {setRoomTitle} from "./render.js";
 
 let currentRoom;
 
@@ -24,7 +25,27 @@ function getClosestPassable() {
 function isNearDoor(passable) {
     const distance = Math.sqrt(Math.pow(location.playerX - passable.x, 2) +
         Math.pow(location.playerY - passable.y, 2));
-    return distance <= 2.2;
+
+    let angle = 0;
+    switch (passable.direction)
+    {
+        case 'e':
+            angle = 90;
+            break;
+        case 'n':
+            angle = 180;
+            break;
+        case 'w':
+            angle = 270;
+            break;
+        default:
+            break;
+    }
+
+    let playerA = location.playerA / 3.14159 * 180 % 360;
+    playerA = (playerA + 360) % 360;
+    if (playerA > (angle + 180)) playerA -= 360;
+    return distance <= 3 && Math.abs(playerA - angle) < 45;
 }
 
 function checkForRoomSwitch() {
@@ -37,10 +58,11 @@ function checkForRoomSwitch() {
     }
 }
 
-export function switchRoom(direction) {
-    gameClient.personClient.movePerson(direction);
+export async function switchRoom(direction) {
+    await gameClient.personClient.movePerson(direction);
     gameClient.positionClient.getPosition().then(position => {
         generateRoomInDirection(position, direction);
+        setRoomTitle(position.name);
     });
 }
 

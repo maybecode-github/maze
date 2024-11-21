@@ -63,37 +63,37 @@ async function keydown(event) {
     else if (keyCode === "q") await dropItem();
     else if (keyCode === "g") {
         let passable = getClosestPassable();
-        passable.door.then(door => {
+        passable.door.then(async door => {
             if (door.locked) {
-                if (getItemInHand() == null) {
+                if (await getItemInHand() == null) {
                     return;
                 }
-                getItemInHand().then(item => {
-                    gameClient.doorClient.changeDoorStatus(passable.direction, "unlock", item.name)
+                getItemInHand().then(async item => {
+                    await gameClient.doorClient.changeDoorStatus(passable.direction, "unlock", item.name)
                         .then(() => {
                             wrongKey = false;
                             door.locked = false;
                         })
-                        .catch(error => {
+                        .catch(async error => {
                             if (error.message.includes("HTTP-Error: 422")) {
                                 wrongKey = true;
-                                setWrongKeyTimeout();
+                                await setWrongKeyTimeout();
                             } else {
                                 console.error("Error unlocking door:", error);
                             }
                         });
                 });
             } else {
-                getItemInHand().then(item => {
-                    gameClient.doorClient.changeDoorStatus(passable.direction, "lock", item.name)
+                await getItemInHand().then(async item => {
+                    await gameClient.doorClient.changeDoorStatus(passable.direction, "lock", item.name)
                         .then(() => {
                             door.locked = true;
                             wrongKey = false;
                         })
-                        .catch(error => {
+                        .catch(async error => {
                             if (error.message.includes("HTTP-Error: 422")) {
                                 wrongKey = true;
-                                setWrongKeyTimeout();
+                                await setWrongKeyTimeout();
                             } else {
                                 console.error("Error unlocking door:", error);
                             }
@@ -111,7 +111,7 @@ async function keydown(event) {
         }
 
         let passable = getClosestPassable();
-        passable.door.then(door => {
+        passable.door.then(async door => {
             if (door.locked) {
                 return;
             }
@@ -121,11 +121,11 @@ async function keydown(event) {
             if (door.open) {
                 door.close = true;
                 door.open = false;
-                gameClient.doorClient.changeDoorStatus(passable.direction, "close");
+                await gameClient.doorClient.changeDoorStatus(passable.direction, "close");
             } else {
                 door.close = false;
                 door.open = true;
-                gameClient.doorClient.changeDoorStatus(passable.direction, "open");
+                await gameClient.doorClient.changeDoorStatus(passable.direction, "open");
             }
         });
     } else if (keyCode === "f") {
@@ -134,14 +134,15 @@ async function keydown(event) {
         }
 
         let passable = getClosestPassable();
-        passable.door.then(door => {
+        passable.door.then(async door => {
             if (door.locked) {
                 return;
             }
             if (!door.open) {
                 return;
             }
-            switchRoom(passable.direction);
+
+            await switchRoom(passable.direction);
         });
     } else if (keyCode === "m") {
         isMapVisible = !isMapVisible;

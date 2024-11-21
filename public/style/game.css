@@ -1,6 +1,8 @@
 body
 {
 	background-image: url('../image/wallpaper.webp');
+	background-size: cover;
+	overflow: hidden;
 }
 
 img
@@ -29,6 +31,7 @@ p
 #screen_window
 {
 	position: relative;
+	transform: translate(25%, 25%) scale(1.5);
 }
 
 #screen
