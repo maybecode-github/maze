@@ -24,6 +24,8 @@ let dragStartX = 0;
 let dragStartY = 0;
 
 let keys = {};
+let messageTimeout;
+export let wrongKey;
 
 async function mousedown(event) {
     if (isMapVisible) {
@@ -69,11 +71,13 @@ async function keydown(event) {
                 getItemInHand().then(item => {
                     gameClient.doorClient.changeDoorStatus(passable.direction, "unlock", item.name)
                         .then(() => {
+                            wrongKey = false;
                             door.locked = false;
                         })
                         .catch(error => {
                             if (error.message.includes("HTTP-Error: 422")) {
-                                console.log("falsches item");
+                                wrongKey = true;
+                                setWrongKeyTimeout();
                             } else {
                                 console.error("Error unlocking door:", error);
                             }
@@ -84,10 +88,12 @@ async function keydown(event) {
                     gameClient.doorClient.changeDoorStatus(passable.direction, "lock", item.name)
                         .then(() => {
                             door.locked = true;
+                            wrongKey = false;
                         })
                         .catch(error => {
                             if (error.message.includes("HTTP-Error: 422")) {
-                                console.log("falsches item");
+                                wrongKey = true;
+                                setWrongKeyTimeout();
                             } else {
                                 console.error("Error unlocking door:", error);
                             }
@@ -214,6 +220,12 @@ async function updatePlayer() {
         }
     }
 
+}
+
+async function setWrongKeyTimeout() {
+    messageTimeout = setTimeout(() => {
+        wrongKey = false;
+    }, 1000);
 }
 
 export {updatePlayer, isMapVisible, mapOffsetY, mapOffsetX};

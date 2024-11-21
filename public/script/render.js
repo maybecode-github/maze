@@ -1,6 +1,7 @@
 import {depth, firstRoom, fov, location, steps} from './game.js';
 import {getCurrentRoom, isNearDoor} from "./player.js";
 import {gameClient} from "../client/GameClient.js";
+import {wrongKey} from "./controls.js";
 
 const screen = document.getElementById("screen");
 const ctx = document.getElementById("screen").getContext("2d");
@@ -370,14 +371,18 @@ export async function renderFrame() {
                     return;
                 }
                 if (door.locked) {
-                    displayMessage("Verschlossen. Schlüssel benötigt! Drücke G zum aufschließen/abschließen.");
+                    if (wrongKey) {
+                        displayMessage("Das ist der falsche Schlüssel!");
+                    } else {
+                        displayMessage("Verschlossen. Schlüssel benötigt! Drücke G zum aufschließen/abschließen.");
+                    }
                 } else {
                     if (!door.closable) {
                         displayMessage("Tür kann nicht geschlossen werden! Drücke F um hindurch zu gehen.");
                         return;
                     }
                     if (door.open) {
-                        displayMessage("Tür offen. Drücke E zum schließen.\r\nDrücke F um hindurch zu gehen.");
+                        displayMessage("Tür offen. Drücke E zum schließen. Drücke F um hindurch zu gehen.");
                     } else {
                         displayMessage("Drücke E um die Tür zu öffnen!");
                     }
@@ -393,3 +398,5 @@ function getColorOfCurrentRoom() {
     }
     return "white";
 }
+
+export {wrongKey}
