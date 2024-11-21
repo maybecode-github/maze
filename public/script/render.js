@@ -168,9 +168,10 @@ function colorFromName(color) {
 
 export async function loadTextures() {
     //wall textures
-    textures.push({"id": 1, "name": "wall", "tex": await loadTexture("./image/brick.png", 1)});
+    textures.push({"id": 1, "name": "wall", "tex": await loadTexture("./image/brick-wall.webp", 1)});
     textures.push({"id": 10, "name": "door-open", "tex": await loadTexture("./image/door-open.webp", 1)});
     textures.push({"id": 11, "name": "door-closed", "tex": await loadTexture("./image/door-closed.webp", 1)});
+    textures.push({"id": 12, "name": "door-locked", "tex": await loadTexture("./image/door-locked.webp", 1)});
     //things on ground
     textures.push({"id": 50, "name": "item-generic", "tex": await loadTexture("./image/item-generic.webp", 0.25)});
     textures.push({"id": 51, "name": "blume", "tex": await loadTexture("./image/flower.webp", 0.25)});
@@ -294,10 +295,20 @@ export async function renderFrame() {
                 if (distanceToWall < depth && currentTexture != null) {
                     let sampleY = (y - ceiling) / (floor - ceiling);
                     const index = (Math.floor(sampleY * currentTexture.height * scale % currentTexture.height) * currentTexture.width + Math.floor(sampleX * currentTexture.width * scale % currentTexture.width)) * 4;
-                    buffer.data[(y * screen.width + x) * 4] = currentTexture.data[index] - fog;
-                    buffer.data[(y * screen.width + x) * 4 + 1] = currentTexture.data[index + 1] - fog;
-                    buffer.data[(y * screen.width + x) * 4 + 2] = currentTexture.data[index + 2] - fog;
-                    buffer.data[(y * screen.width + x) * 4 + 3] = currentTexture.data[index + 3];
+
+                    if (currentTexture.data[index + 3] > 20)
+                    {
+                        buffer.data[(y * screen.width + x) * 4] = currentTexture.data[index] - fog;
+                        buffer.data[(y * screen.width + x) * 4 + 1] = currentTexture.data[index + 1] - fog;
+                        buffer.data[(y * screen.width + x) * 4 + 2] = currentTexture.data[index + 2] - fog;
+                    }
+                    else
+                    {
+                        sampleY = (y - screen.height / 2) / screen.height;
+                        buffer.data[(y * screen.width + x) * 4] = floorColor.r * sampleY;
+                        buffer.data[(y * screen.width + x) * 4 + 1] = floorColor.g * sampleY;
+                        buffer.data[(y * screen.width + x) * 4 + 2] = floorColor.b * sampleY;
+                    }
                 } else {
                     buffer.data[(y * screen.width + x) * 4] = 0;
                     buffer.data[(y * screen.width + x) * 4 + 1] = 0;
@@ -329,7 +340,7 @@ export async function renderFrame() {
             const inPlayerFov = Math.abs(objectAngle) < fov / 2.0;
 
             if (inPlayerFov && distanceFromPlayer >= 0.5 && distanceFromPlayer < 18) {
-                if (distanceFromPlayer < 2) {
+                if (distanceFromPlayer < 3) {
                     closestItem = gameClient.position.things[i].name;
                 }
 
@@ -368,31 +379,27 @@ export async function renderFrame() {
 
     if (currentRoom) {
         currentRoom.passables.forEach(passable => {
-            if (!isNearDoor(passable)) {
+            if (!isNearDoor(passable) || currentRoom !== passable.room) {
                 return;
             }
-            passable.door.then(door => {
-                if (currentRoom !== passable.room) {
+
+            if (passable.door.locked) {
+                if (wrongKey) {
+                    displayMessage("Das ist der falsche Schlüssel!");
+                } else {
+                    displayMessage("Verschlossen. Schlüssel benötigt! Drücke G zum aufschließen/abschließen.");
+                }
+            } else {
+                if (!passable.door.closable) {
+                    displayMessage("Tür kann nicht geschlossen werden! Drücke F um hindurch zu gehen.");
                     return;
                 }
-                if (door.locked) {
-                    if (wrongKey) {
-                        displayMessage("Das ist der falsche Schlüssel!");
-                    } else {
-                        displayMessage("Verschlossen. Schlüssel benötigt! Drücke G zum aufschließen/abschließen.");
-                    }
+                if (passable.door.open) {
+                    displayMessage("Tür offen. Drücke E zum schließen. Drücke F um hindurch zu gehen.");
                 } else {
-                    if (!door.closable) {
-                        displayMessage("Tür kann nicht geschlossen werden! Drücke F um hindurch zu gehen.");
-                        return;
-                    }
-                    if (door.open) {
-                        displayMessage("Tür offen. Drücke E zum schließen. Drücke F um hindurch zu gehen.");
-                    } else {
-                        displayMessage("Drücke E um die Tür zu öffnen!");
-                    }
+                    displayMessage("Drücke E um die Tür zu öffnen!");
                 }
-            });
+            }
         });
     }
 }

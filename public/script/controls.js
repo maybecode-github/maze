@@ -61,46 +61,45 @@ async function keydown(event) {
     if (keyCode === "arrowup") await nextInventorySlot();
     else if (keyCode === "arrowdown") await previousInventorySlot();
     else if (keyCode === "q") await dropItem();
+    //Door Controls
     else if (keyCode === "g") {
         let passable = getClosestPassable();
-        passable.door.then(async door => {
-            if (door.locked) {
-                if (await getItemInHand() == null) {
-                    return;
-                }
-                getItemInHand().then(async item => {
-                    await gameClient.doorClient.changeDoorStatus(passable.direction, "unlock", item.name)
-                        .then(() => {
-                            wrongKey = false;
-                            door.locked = false;
-                        })
-                        .catch(async error => {
-                            if (error.message.includes("HTTP-Error: 422")) {
-                                wrongKey = true;
-                                await setWrongKeyTimeout();
-                            } else {
-                                console.error("Error unlocking door:", error);
-                            }
-                        });
-                });
-            } else {
-                await getItemInHand().then(async item => {
-                    await gameClient.doorClient.changeDoorStatus(passable.direction, "lock", item.name)
-                        .then(() => {
-                            door.locked = true;
-                            wrongKey = false;
-                        })
-                        .catch(async error => {
-                            if (error.message.includes("HTTP-Error: 422")) {
-                                wrongKey = true;
-                                await setWrongKeyTimeout();
-                            } else {
-                                console.error("Error unlocking door:", error);
-                            }
-                        });
-                });
+        if (passable.door.locked) {
+            if (await getItemInHand() == null) {
+                return;
             }
-        });
+            getItemInHand().then(async item => {
+                await gameClient.doorClient.changeDoorStatus(passable.direction, "unlock", item.name)
+                    .then(() => {
+                        wrongKey = false;
+                        passable.door.locked = false;
+                    })
+                    .catch(async error => {
+                        if (error.message.includes("HTTP-Error: 422")) {
+                            wrongKey = true;
+                            await setWrongKeyTimeout();
+                        } else {
+                            console.error("Error unlocking door:", error);
+                        }
+                    });
+            });
+        } else {
+            await getItemInHand().then(async item => {
+                await gameClient.doorClient.changeDoorStatus(passable.direction, "lock", item.name)
+                    .then(() => {
+                        passable.door.locked = true;
+                        wrongKey = false;
+                    })
+                    .catch(async error => {
+                        if (error.message.includes("HTTP-Error: 422")) {
+                            wrongKey = true;
+                            await setWrongKeyTimeout();
+                        } else {
+                            console.error("Error unlocking door:", error);
+                        }
+                    });
+            });
+        }
     } else if (keyCode === "e") {
         if (closestItem != null) {
             await gameClient.personClient.takeThing(closestItem);
@@ -111,39 +110,35 @@ async function keydown(event) {
         }
 
         let passable = getClosestPassable();
-        passable.door.then(async door => {
-            if (door.locked) {
-                return;
-            }
-            if (!door.closable) {
-                return;
-            }
-            if (door.open) {
-                door.close = true;
-                door.open = false;
-                await gameClient.doorClient.changeDoorStatus(passable.direction, "close");
-            } else {
-                door.close = false;
-                door.open = true;
-                await gameClient.doorClient.changeDoorStatus(passable.direction, "open");
-            }
-        });
+        if (passable.door.locked) {
+            return;
+        }
+        if (!passable.door.closable) {
+            return;
+        }
+        if (passable.door.open) {
+            passable.door.close = true;
+            passable.door.open = false;
+            await gameClient.doorClient.changeDoorStatus(passable.direction, "close");
+        } else {
+            passable.door.close = false;
+            passable.door.open = true;
+            await gameClient.doorClient.changeDoorStatus(passable.direction, "open");
+        }
     } else if (keyCode === "f") {
         if (getClosestPassable() == null) {
             return;
         }
 
         let passable = getClosestPassable();
-        passable.door.then(async door => {
-            if (door.locked) {
-                return;
-            }
-            if (!door.open) {
-                return;
-            }
+        if (passable.door.locked) {
+            return;
+        }
+        if (!passable.door.open) {
+            return;
+        }
 
-            await switchRoom(passable.direction);
-        });
+        await switchRoom(passable.direction);
     } else if (keyCode === "m") {
         isMapVisible = !isMapVisible;
         if (isMapVisible) {

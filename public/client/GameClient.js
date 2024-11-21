@@ -23,10 +23,10 @@ class GameClient {
      * starts regular updates of the person and position info
      */
     startRegularUpdates() {
-        this.update().then(r => console.log("Update successful")).catch(e => console.error("Update failed:", e));
+        this.update().catch(e => console.error("Update failed:", e));
 
         setInterval(() => {
-            this.update().then(r => console.log("Update successful")).catch(e => console.error("Update failed:", e));
+            this.update().catch(e => console.error("Update failed:", e));
         }, this.updateInterval);
     }
 

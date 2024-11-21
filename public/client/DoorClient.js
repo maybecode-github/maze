@@ -1,5 +1,7 @@
 "use strict";
 
+import {getCurrentRoom} from "../script/player.js";
+
 class DoorClient {
 
     constructor(baseURL) {
@@ -69,6 +71,8 @@ class DoorClient {
         if (!response.ok) {
             throw new Error("HTTP-Error: " + response.status);
         }
+
+        await getCurrentRoom().updateDoor(direction, false);
 
         return await response.json();
     }
