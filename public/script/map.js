@@ -12,10 +12,10 @@ function renderMap() {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, screen.width, screen.height);
 
-    const mapCenterX = screen.width / 2;
-    const mapCenterY = screen.height / 2;
     const roomWidth = 11 * mapScale;
     const roomHeight = 11 * mapScale;
+    const mapCenterX = screen.width / 2 - (location.playerX - 30) / 11 * roomWidth;
+    const mapCenterY = screen.height / 2 - (location.playerY - 30) / 11 * roomHeight;
 
     rooms.forEach((room) => {
         const roomX = mapCenterX + (room.x - 30) / room.roomSize * roomWidth;

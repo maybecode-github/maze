@@ -68,7 +68,6 @@ class Room {
 
     async updateDoor(direction, createPassables)
     {
-        console.log(this);
         const wallSize = this.roomSize + 2;
         const doorPos = Math.floor(wallSize / 2);
         let door = await gameClient.doorClient.getDoor(direction);

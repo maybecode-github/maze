@@ -26,18 +26,23 @@ export function generateRoomInDirection(position, direction) {
             return null;
     }
 
+    let deltaX = Math.sign(currentRoom.x - newX);
+    let deltaY = Math.sign(currentRoom.y - newY);
+
     const roomExists = rooms.some(room => room.x === newX && room.y === newY);
     if (roomExists) {
-        positionPlayerInCenterOfRoom(newX, newY, roomSize);
+        positionPlayerInCenterOfRoom(newX, newY, roomSize, deltaX * 3, deltaY * 3);
         return null;
     }
 
     const newRoom = new Room(newX, newY, roomSize, position);
-    positionPlayerInCenterOfRoom(newX, newY, roomSize);
+    positionPlayerInCenterOfRoom(newX, newY, roomSize, deltaX * 3, deltaY * 3);
     return newRoom;
 }
 
-function positionPlayerInCenterOfRoom(roomX, roomY, roomSize) {
-    location.playerX = roomX + Math.floor(roomSize / 2);
-    location.playerY = roomY + Math.floor(roomSize / 2);
+export function positionPlayerInCenterOfRoom(roomX, roomY, roomSize, deltaX, deltaY) {
+    location.playerX = roomX + 1 + deltaX + (roomSize / 2);
+    location.playerY = roomY + 1 + deltaY + (roomSize / 2);
+    location.playerA = Math.atan2(-deltaX, -deltaY);
+    console.log(Math.atan2(deltaY, deltaX) / 3.14159 * 180);
 }

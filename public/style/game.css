@@ -52,6 +52,7 @@ p
 	position: absolute;
 	top: 36px;
 	left: 5px;
+	transform: scaleY(-1);
 }
 
 #buffer

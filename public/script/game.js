@@ -4,10 +4,11 @@ import {gameClient} from "../client/GameClient.js";
 import {loadTextures, renderFrame, setRoomTitle} from "./render.js";
 import {renderInventory} from "./inventory.js";
 import {renderMap} from "./map.js";
+import {positionPlayerInCenterOfRoom} from "./generator.js";
 
 let location = {
-    playerX: 32.0,
-    playerY: 32.0,
+    playerX: 30.0,
+    playerY: 30.0,
     playerA: 0.0
 };
 
@@ -25,8 +26,8 @@ const rooms = [];
 async function load() {
     await loadTextures();
     const position = await gameClient.positionClient.getPosition();
-    console.log(position);
     rooms.push(new Room(30, 30, 11, position));
+    positionPlayerInCenterOfRoom(30, 30, 11, 0, -3);
     setRoomTitle(position.name);
     updateInterval = window.setInterval(update, deltaTime * 1000);
 }
