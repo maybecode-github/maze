@@ -4,8 +4,10 @@ import {gameClient} from "../client/GameClient.js";
 
 const screen = document.getElementById("screen");
 const ctx = document.getElementById("screen").getContext("2d");
+const textureScale = 4;
 
 let textures = [];
+export let closestItem = null;
 
 function colorFromName(color) {
     const colors = {
@@ -161,15 +163,21 @@ function colorFromName(color) {
 }
 
 export async function loadTextures() {
-    textures.push({"id": 1, "name": "wall", "tex": await loadTexture("./image/brick.png")});
-    textures.push({"id": 2, "name": "blume", "tex": await loadTexture("./image/flower.png")});
-    textures.push({"id": 100, "name": "inv-slot", "tex": await loadTexture("./image/inv-slot.webp")});
-    textures.push({"id": 101, "name": "inv-slot-selected", "tex": await loadTexture("./image/inv-slot-selected.webp")});
+    //wall textures
+    textures.push({"id": 1, "name": "wall", "tex": await loadTexture("./image/brick.png", 1)});
+    //things on ground
+    textures.push({"id": 50, "name": "item-generic", "tex": await loadTexture("./image/item-generic.webp", 0.25)});
+    textures.push({"id": 51, "name": "blume", "tex": await loadTexture("./image/flower.webp", 0.25)});
+    //items in inventory
+    textures.push({"id": 100, "name": "inv-slot", "tex": await loadTexture("./image/inv-slot.webp", 1)});
+    textures.push({"id": 101, "name": "inv-slot-selected", "tex": await loadTexture("./image/inv-slot-selected.webp", 1)});
+    textures.push({"id": 102, "name": "item-generic", "tex": await loadTexture("./image/item-generic.webp", 0.8)});
+    textures.push({"id": 102, "name": "blume", "tex": await loadTexture("./image/flower.webp", 0.8)});
 }
 
 function displayMessage(message) {
     ctx.fillStyle = "white";
-    ctx.font = "16px Arial";
+    ctx.font = "16px Tahoma, serif";
     ctx.textAlign = "center";
     ctx.fillText(message, screen.width / 2, screen.height / 2);
 }
@@ -182,16 +190,16 @@ export async function getTextureById(id) {
     return null;
 }
 
-async function getTextureByName(name)
+export async function getTextureByName(name, offset)
 {
     for (let i = 0; i < textures.length; i++) {
-        if (textures[i].name.includes(name.toLowerCase())) return textures[i].tex.data;
+        if (textures[i].id >= offset && textures[i].name.includes(name.toLowerCase())) return textures[i].tex;
     }
 
     return null;
 }
 
-async function loadTexture(url) {
+async function loadTexture(url, scale) {
     const buffer = document.getElementById("buffer");
     const bufferCtx = buffer.getContext("2d");
     bufferCtx.clearRect(0, 0, buffer.width, buffer.height);
@@ -200,7 +208,7 @@ async function loadTexture(url) {
     image.src = url;
     await image.decode();
     const img = image;
-    bufferCtx.drawImage(image, 0, 0, image.width, image.height);
+    bufferCtx.drawImage(image, 0, image.height - image.height * scale, image.width * scale, image.height * scale);
     return {"img": img, "data": bufferCtx.getImageData(0, 0, image.width, image.height)};
 }
 
@@ -269,7 +277,7 @@ export async function renderFrame() {
             if (y > ceiling && y <= floor) {
                 if (distanceToWall < depth && currentTexture != null) {
                     let sampleY = (y - ceiling) / (floor - ceiling);
-                    const index = (Math.floor(sampleY * currentTexture.height) * currentTexture.width + Math.floor(sampleX * currentTexture.width)) * 4;
+                    const index = (Math.floor(sampleY * currentTexture.height * textureScale % currentTexture.height) * currentTexture.width + Math.floor(sampleX * currentTexture.width * textureScale)) * 4;
                     buffer.data[(y * screen.width + x) * 4] = currentTexture.data[index] - fog;
                     buffer.data[(y * screen.width + x) * 4 + 1] = currentTexture.data[index + 1] - fog;
                     buffer.data[(y * screen.width + x) * 4 + 2] = currentTexture.data[index + 2] - fog;
@@ -288,6 +296,7 @@ export async function renderFrame() {
     }
 
     const currentRoom = getCurrentRoom();
+    closestItem = null;
     if (currentRoom != null)
     {
         for (let i = 0; i < gameClient.position.things.length; i++)
@@ -307,11 +316,16 @@ export async function renderFrame() {
 
             if (inPlayerFov && distanceFromPlayer >= 0.5 && distanceFromPlayer < 18)
             {
-                const objectTexture = await getTextureByName(gameClient.position.things[i].name);
+                if (distanceFromPlayer < 2)
+                {
+                    closestItem = gameClient.position.things[i].name;
+                }
+
+                const objectTexture = await getTextureByName(gameClient.position.things[i].name, 0) ?? await getTextureByName("item-generic", 0);
                 const objectCeiling = (screen.height / 2) - screen.height / distanceFromPlayer;
                 const objectFloor = screen.height - objectCeiling;
                 const objectHeight = objectFloor - objectCeiling;
-                const objectAspectRatio = objectTexture.height / objectTexture.width;
+                const objectAspectRatio = objectTexture.data.height / objectTexture.data.width;
                 const objectWidth = objectHeight / objectAspectRatio;
                 const middleOfObject = (0.5 * (objectAngle / (fov / 2)) + 0.5) * screen.width;
 
@@ -322,12 +336,12 @@ export async function renderFrame() {
                         const objectColumn = Math.floor(middleOfObject + x - (objectWidth / 2.0));
                         if (objectColumn >= 0 && objectColumn < screen.width)
                         {
-                            const index = (Math.floor(sampleY * objectTexture.height) * objectTexture.width + Math.floor(sampleX * objectTexture.width)) * 4;
-                            if (objectTexture.data[index + 3] > 20 && depthBuffer[objectColumn] >= distanceFromPlayer)
+                            const index = (Math.floor(sampleY * objectTexture.data.height) * objectTexture.data.width + Math.floor(sampleX * objectTexture.data.width)) * 4;
+                            if (objectTexture.data.data[index + 3] > 20 && depthBuffer[objectColumn] >= distanceFromPlayer)
                             {
-                                buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4] =  objectTexture.data[index] - fog;
-                                buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 1] = objectTexture.data[index + 1] - fog;
-                                buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 2] = objectTexture.data[index + 2] - fog;
+                                buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4] =  objectTexture.data.data[index] - fog;
+                                buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 1] = objectTexture.data.data[index + 1] - fog;
+                                buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 2] = objectTexture.data.data[index + 2] - fog;
                             }
                         }
                     }
@@ -337,6 +351,11 @@ export async function renderFrame() {
     }
 
     ctx.putImageData(buffer, 0, 0);
+
+    if (closestItem != null)
+    {
+        displayMessage(closestItem);
+    }
 
     if (currentRoom) {
         currentRoom.passables.forEach(passable => {

@@ -1,5 +1,7 @@
 "use strict";
 
+import {gameClient} from "./GameClient.js";
+
 export class PositionClient {
     constructor(baseURL) {
         if (!baseURL) throw new Error("Base URL is required for the PositionClient.");
@@ -52,6 +54,7 @@ export class PositionClient {
             });
 
             if (response.ok) {
+                await gameClient.update();
                 return await response.json();
             }
         } catch (error) {

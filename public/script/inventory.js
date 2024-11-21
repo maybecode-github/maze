@@ -1,4 +1,4 @@
-import {getTextureById} from "./render.js";
+import {getTextureById, getTextureByName} from "./render.js";
 import {gameClient} from "../client/GameClient.js";
 
 const screen = document.getElementById("screen");
@@ -14,6 +14,12 @@ async function renderInventory()
     {
         ctx.drawImage(i === selected ? selectedSlot.img : slot.img, (screen.width / 4) + i * 64, screen.height - 64 - 25);
     }
+
+    for (let i = 0; i < gameClient.person.things.length; i++)
+    {
+        const texture = await getTextureByName(gameClient.person.things[i].name, 100) ?? await getTextureByName("item-generic", 100);
+        ctx.drawImage(texture.img, (screen.width / 4) + i * 64, screen.height - 64 - 33);
+    }
 }
 
 async function nextInventorySlot()
@@ -28,7 +34,8 @@ async function previousInventorySlot()
 
 async function dropItem()
 {
-
+    if (selected >= gameClient.person.things.length) return;
+    await gameClient.positionClient.dropThing(gameClient.person.things[selected].name);
 }
 
 export {renderInventory, nextInventorySlot, previousInventorySlot, dropItem};

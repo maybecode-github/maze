@@ -1,5 +1,7 @@
 "use strict";
 
+import {gameClient} from "./GameClient.js";
+
 export class PersonClient {
 
     constructor(baseURL) {
@@ -62,6 +64,7 @@ export class PersonClient {
             throw new Error("Error moving person: " + errorData);
         }
 
+        await gameClient.update();
         return await response.json();
     }
 
@@ -80,13 +83,13 @@ export class PersonClient {
             throw new Error("Thing name is required.");
         }
 
-        const response = await fetch('${this.baseUrl}/person/thing', {
-            method: 'POST',
-            headers: {
+        const response = await fetch(`${this.baseUrl}/person/thing`, {
+            "method": 'POST',
+            "headers": {
                 'Content-Type': 'application/json'
             },
-            credentials: 'include',
-            body: JSON.stringify({name: thingName})
+            "credentials": 'include',
+            "body": JSON.stringify({"name": thingName})
         });
 
         if (!response.ok) {
@@ -94,6 +97,7 @@ export class PersonClient {
             throw new Error("Error taking thing: " + errorData);
         }
 
+        await gameClient.update();
         return await response.json();
     }
 

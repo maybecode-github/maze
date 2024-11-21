@@ -2,6 +2,7 @@ import {deltaTime, firstRoom, location} from "./game.js";
 import {dropItem, nextInventorySlot, previousInventorySlot} from "./inventory.js";
 import {getClosestPassable, switchRoom} from "./player.js";
 import {gameClient} from "../client/GameClient.js";
+import {closestItem} from "./render.js";
 
 window.addEventListener("keydown", keydown);
 window.addEventListener("keyup", keyup);
@@ -21,6 +22,11 @@ async function keydown(event) {
     else if (keyCode === "arrowdown") await previousInventorySlot();
     else if (keyCode === "q") await dropItem();
     else if (keyCode === "e") {
+        if (closestItem != null)
+        {
+            await gameClient.personClient.takeThing(closestItem);
+        }
+
         if (getClosestPassable() == null) {
             return;
         }
