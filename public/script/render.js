@@ -190,7 +190,11 @@ function displayMessage(message) {
     ctx.fillStyle = "white";
     ctx.font = "16px Tahoma, serif";
     ctx.textAlign = "center";
-    ctx.fillText(message, screen.width / 2, screen.height / 2);
+    const messages = message.split("\n");
+    for (let i = 0; i < messages.length; i++) {
+        ctx.fillStyle = i === 0 ? "yellow" : "white";
+        ctx.fillText(messages[i], screen.width / 2, screen.height / 2 + 16 * i);
+    }
 }
 
 export function setRoomTitle(title)
@@ -326,50 +330,21 @@ export async function renderFrame() {
     }
 
     closestItem = null;
+    let closestPlayer = null;
     if (currentRoom != null) {
-        for (let i = 0; i < gameClient.position.things.length; i++) {
-            let angle = i * (360 / gameClient.position.things.length);
+        const persons = gameClient.position.persons.filter(person => person.name !== gameClient.person.name);
+        for (let i = 0; i < gameClient.position.things.length + persons.length; i++) {
+            let angle = i * (360 / (gameClient.position.things.length + persons.length));
             let vecX = ((currentRoom.x + 1 + currentRoom.roomSize / 2) + Math.sin(angle / 180 * 3.14159) * currentRoom.roomSize / 4) - location.playerX;
             let vecY = ((currentRoom.y + 1 + currentRoom.roomSize / 2) + Math.cos(angle / 180 * 3.14159) * currentRoom.roomSize / 4) - location.playerY;
 
-            const distanceFromPlayer = Math.sqrt(vecX * vecX + vecY * vecY);
-            const fog = 255 * (distanceFromPlayer * 3 / depth);
-
-            const eyeX = Math.sin(location.playerA);
-            const eyeY = Math.cos(location.playerA);
-            let objectAngle = Math.atan2(eyeY, eyeX) - Math.atan2(vecY, vecX);
-            if (objectAngle < -3.14159) objectAngle += 2.0 * 3.14159;
-            else if (objectAngle > 3.14159) objectAngle -= 2.0 * 3.14159;
-            const inPlayerFov = Math.abs(objectAngle) < fov / 2.0;
-
-            if (inPlayerFov && distanceFromPlayer >= 0.5 && distanceFromPlayer < 18) {
-                if (distanceFromPlayer < 3) {
-                    closestItem = gameClient.position.things[i].name;
-                }
-
-                const objectTexture = await getTextureByName(gameClient.position.things[i].name, 0) ?? await getTextureByName("item-generic", 0);
-                const objectCeiling = (screen.height / 2) - screen.height / distanceFromPlayer;
-                const objectFloor = screen.height - objectCeiling;
-                const objectHeight = objectFloor - objectCeiling;
-                const objectAspectRatio = objectTexture.data.height / objectTexture.data.width;
-                const objectWidth = objectHeight / objectAspectRatio;
-                const middleOfObject = (0.5 * (objectAngle / (fov / 2)) + 0.5) * screen.width;
-
-                for (let x = 0; x < objectWidth; x++) {
-                    for (let y = 0; y < objectHeight; y++) {
-                        const sampleX = x / objectWidth;
-                        const sampleY = y / objectHeight;
-                        const objectColumn = Math.floor(middleOfObject + x - (objectWidth / 2.0));
-                        if (objectColumn >= 0 && objectColumn < screen.width) {
-                            const index = (Math.floor(sampleY * objectTexture.data.height) * objectTexture.data.width + Math.floor(sampleX * objectTexture.data.width)) * 4;
-                            if (objectTexture.data.data[index + 3] > 20 && depthBuffer[objectColumn] >= distanceFromPlayer) {
-                                buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4] = objectTexture.data.data[index] - fog;
-                                buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 1] = objectTexture.data.data[index + 1] - fog;
-                                buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 2] = objectTexture.data.data[index + 2] - fog;
-                            }
-                        }
-                    }
-                }
+            if (i < gameClient.position.things.length)
+            {
+                closestItem = await renderObject(closestItem, currentRoom, gameClient.position.things[i].name, vecX, vecY, true);
+            }
+            else
+            {
+                closestPlayer = await renderObject(closestPlayer, currentRoom, persons[i - gameClient.position.things.length].name, vecX, vecY, false);
             }
         }
     }
@@ -377,7 +352,10 @@ export async function renderFrame() {
     ctx.putImageData(buffer, 0, 0);
 
     if (closestItem != null) {
-        displayMessage(closestItem);
+        displayMessage(`${closestItem}\n[E] - einsammeln`);
+    }
+    else if (closestPlayer != null) {
+        displayMessage(`${closestPlayer}\nSpieler`);
     }
 
     if (currentRoom) {
@@ -388,23 +366,68 @@ export async function renderFrame() {
 
             if (passable.door.locked) {
                 if (wrongKey) {
-                    displayMessage("Das ist der falsche Schlüssel!");
+                    displayMessage("Verschlossen.\nDas ist der falsche Schlüssel!");
                 } else {
-                    displayMessage("Verschlossen. Schlüssel benötigt! Drücke G zum aufschließen/abschließen.");
+                    displayMessage("Verschlossen.\nSchlüssel benötigt!\n[G] - aufschließen/abschließen");
                 }
             } else {
                 if (!passable.door.closable) {
-                    displayMessage("Tür kann nicht geschlossen werden! Drücke F um hindurch zu gehen.");
+                    displayMessage("Tür offen.\nNicht verschließbar!\n[F] - betreten");
                     return;
                 }
                 if (passable.door.open) {
-                    displayMessage("Tür offen. Drücke E zum schließen. Drücke F um hindurch zu gehen.");
+                    displayMessage("Tür offen.\n[E] - schließen\n[F] - betreten");
                 } else {
-                    displayMessage("Drücke E um die Tür zu öffnen!");
+                    displayMessage("Tür geschlossen.\n[E] - öffnen");
                 }
             }
         });
     }
+}
+
+async function renderObject(closestObject, currentRoom, name, vecX, vecY, isItem)
+{
+    const distanceFromPlayer = Math.sqrt(vecX * vecX + vecY * vecY);
+    const fog = 255 * (distanceFromPlayer * 3 / depth);
+
+    const eyeX = Math.sin(location.playerA);
+    const eyeY = Math.cos(location.playerA);
+    let objectAngle = Math.atan2(eyeY, eyeX) - Math.atan2(vecY, vecX);
+    if (objectAngle < -3.14159) objectAngle += 2.0 * 3.14159;
+    else if (objectAngle > 3.14159) objectAngle -= 2.0 * 3.14159;
+    const inPlayerFov = Math.abs(objectAngle) < fov / 2.0;
+
+    if (inPlayerFov && distanceFromPlayer >= 0.5 && distanceFromPlayer < 18) {
+        if (distanceFromPlayer < 3) {
+            closestObject = name;
+        }
+
+        const objectTexture = isItem === true ? (await getTextureByName(name, 0) ?? await getTextureByName("item-generic", 0)) : await getTextureByName("character", 0);
+        const objectCeiling = (screen.height / 2) - screen.height / distanceFromPlayer;
+        const objectFloor = screen.height - objectCeiling;
+        const objectHeight = objectFloor - objectCeiling;
+        const objectAspectRatio = objectTexture.data.height / objectTexture.data.width;
+        const objectWidth = objectHeight / objectAspectRatio;
+        const middleOfObject = (0.5 * (objectAngle / (fov / 2)) + 0.5) * screen.width;
+
+        for (let x = 0; x < objectWidth; x++) {
+            for (let y = 0; y < objectHeight; y++) {
+                const sampleX = x / objectWidth;
+                const sampleY = y / objectHeight;
+                const objectColumn = Math.floor(middleOfObject + x - (objectWidth / 2.0));
+                if (objectColumn >= 0 && objectColumn < screen.width) {
+                    const index = (Math.floor(sampleY * objectTexture.data.height) * objectTexture.data.width + Math.floor(sampleX * objectTexture.data.width)) * 4;
+                    if (objectTexture.data.data[index + 3] > 20 && depthBuffer[objectColumn] >= distanceFromPlayer) {
+                        buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4] = objectTexture.data.data[index] - fog;
+                        buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 1] = objectTexture.data.data[index + 1] - fog;
+                        buffer.data[(Math.floor(objectCeiling + y) * screen.width + objectColumn) * 4 + 2] = objectTexture.data.data[index + 2] - fog;
+                    }
+                }
+            }
+        }
+    }
+
+    return closestObject;
 }
 
 function getColorOfCurrentRoom() {

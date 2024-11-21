@@ -21,7 +21,7 @@ async function renderInventory() {
 
         if (i === selected)
         {
-            ctx.fillStyle = "white";
+            ctx.fillStyle = "yellow";
             ctx.font = "16px Tahoma, serif";
             ctx.textAlign = "center";
             ctx.fillText(gameClient.person.things[i].name, (i % 10) * 64 + ((10 - Math.min(slots, 10) + 1) * 64) / 2, screen.height - 12);
