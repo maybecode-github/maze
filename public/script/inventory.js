@@ -10,6 +10,7 @@ async function renderInventory() {
     slots = gameClient.person.things.length;
     const slot = await getTextureById(100);
     const selectedSlot = await getTextureById(101);
+    ctx.beginPath();
 
     for (let i = 0; i < slots; i++) {
         ctx.drawImage(i === selected ? selectedSlot.img : slot.img, (i % 10) * 64 + ((10 - Math.min(slots, 10)) * 64) / 2, screen.height - ((Math.floor(i / 10) + 1) * 64) - 35);
@@ -44,6 +45,8 @@ async function getItemInHand() {
 async function dropItem() {
     if (selected >= gameClient.person.things.length) return;
     await gameClient.positionClient.dropThing(gameClient.person.things[selected].name);
+
+    if (selected >= gameClient.person.things.length && selected > 0) selected--;
 }
 
 export {renderInventory, nextInventorySlot, previousInventorySlot, dropItem, getItemInHand};

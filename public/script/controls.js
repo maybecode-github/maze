@@ -1,4 +1,4 @@
-import {deltaTime, location} from "./game.js";
+import {deltaTime, location, init} from "./game.js";
 import {dropItem, getItemInHand, nextInventorySlot, previousInventorySlot} from "./inventory.js";
 import {getClosestPassable, switchRoom, getCurrentRoom} from "./player.js";
 import {gameClient} from "../client/GameClient.js";
@@ -15,20 +15,25 @@ const runMultiplier = 2;
 
 let keys = {};
 let messageTimeout;
-export let wheel = 5;
+export let gameStarted = false;
+export let wheel = 10;
 export let wrongKey;
 
 async function mousewheel(event)
 {
     wheel -= event.deltaY / 102;
-    wheel = Math.max(Math.min(wheel, 10), 1);
+    wheel = Math.max(Math.min(wheel, 20), 1);
 }
 
 async function keydown(event) {
     const keyCode = event.key.toLowerCase();
 
     //Inventory Controls
-    if (keyCode === "arrowup") await nextInventorySlot();
+    if (keyCode === "enter") {
+        await init();
+        gameStarted = true;
+    }
+    else if (keyCode === "arrowup") await nextInventorySlot();
     else if (keyCode === "arrowdown") await previousInventorySlot();
     else if (keyCode === "q") await dropItem();
     //Door Controls

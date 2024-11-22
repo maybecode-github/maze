@@ -1,9 +1,9 @@
 import {Room} from '../entity/Room.js';
-import {updatePlayer} from "./controls.js";
+import {updatePlayer, gameStarted} from "./controls.js";
 import {gameClient} from "../client/GameClient.js";
-import {loadTextures, renderFrame, setRoomDescription, setRoomTitle} from "./render.js";
+import {displayStartScreen, loadTextures, renderFrame, setRoomDescription, setRoomTitle} from "./render.js";
 import {renderInventory} from "./inventory.js";
-import {renderMap} from "./map.js";
+import {renderMap, displayStartScreenMap} from "./map.js";
 import {positionPlayerInCenterOfRoom} from "./generator.js";
 
 let location = {
@@ -24,13 +24,16 @@ const steps = 0.01;
 const rooms = [];
 
 async function load() {
+    updateInterval = window.setInterval(update, deltaTime * 1000);
+}
+
+export async function init() {
     await loadTextures();
     const position = await gameClient.positionClient.getPosition();
     rooms.push(new Room(30, 30, 11, position));
     positionPlayerInCenterOfRoom(30, 30, 11, 0, -3);
     setRoomTitle(position.name);
     setRoomDescription(position.description);
-    updateInterval = window.setInterval(update, deltaTime * 1000);
 }
 
 async function unload() {
@@ -38,6 +41,12 @@ async function unload() {
 }
 
 async function update() {
+    if (!gameStarted){
+        await displayStartScreen();
+        await displayStartScreenMap();
+        return;
+    }
+
     await updatePlayer();
     await renderFrame();
     await renderInventory();

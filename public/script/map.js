@@ -4,10 +4,22 @@ import {getCurrentRoom} from "./player.js";
 import {wheel} from "./controls.js";
 
 let lastPlayerA = 0;
+const screen = document.getElementById("map");
+const ctx = screen.getContext("2d");
+
+export async function displayStartScreenMap()
+{
+    ctx.beginPath();
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, screen.width, screen.height);
+
+    const image = new Image();
+    image.src = "../image/start-screen-map.webp";
+    ctx.drawImage(image, 0, 0, screen.width, screen.height);
+}
 
 function renderMap() {
-    const screen = document.getElementById("map");
-    const ctx = screen.getContext("2d");
+
     ctx.imageSmoothingEnabled = false;
     ctx.beginPath();
     ctx.fillStyle = "black";

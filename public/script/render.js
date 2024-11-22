@@ -201,6 +201,17 @@ function displayMessage(message) {
     }
 }
 
+export async function displayStartScreen()
+{
+    ctx.beginPath();
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, screen.width, screen.height);
+
+    const image = new Image();
+    image.src = "../image/start-screen.webp";
+    ctx.drawImage(image, 0, 0, screen.width, screen.height);
+}
+
 export function setRoomTitle(title)
 {
     const screenTitle = document.getElementById("screen_title");
@@ -389,7 +400,7 @@ export async function renderFrame() {
                     displayMessage("Tür offen.\n[E] - schließen\n[F] - betreten");
                 } else {
                     if (wrongKey) {
-                        displayMessage("Tür ist nicht verschließbar!");
+                        displayMessage("Das ist der falsche Schlüssel!");
                     }
                     else {
                         displayMessage("Tür geschlossen.\n[E] - öffnen\n[G] - abschließen");
