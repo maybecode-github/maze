@@ -382,7 +382,12 @@ export async function renderFrame() {
                 if (passable.door.open) {
                     displayMessage("Tür offen.\n[E] - schließen\n[F] - betreten");
                 } else {
-                    displayMessage("Tür geschlossen.\n[E] - öffnen\n[G] - abschließen");
+                    if (wrongKey) {
+                        displayMessage("Tür ist nicht verschließbar!");
+                    }
+                    else {
+                        displayMessage("Tür geschlossen.\n[E] - öffnen\n[G] - abschließen");
+                    }
                 }
             }
         });

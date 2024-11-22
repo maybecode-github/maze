@@ -34,13 +34,23 @@ function renderMap() {
 
         if (room === getCurrentRoom())
         {
-            for (let i = 0; i < gameClient.position.things.length; i++)
+            const persons = gameClient.position.persons.filter(person => person.name !== gameClient.person.name);
+            for (let i = 0; i < gameClient.position.things.length + persons.length; i++)
             {
                 const thingX = mapCenterX + (room.x - 31) / room.roomSize * roomWidth;
                 const thingY = mapCenterY + (room.y - 31) / room.roomSize * roomHeight;
-                let angle = i * (360 / gameClient.position.things.length);
-                ctx.fillStyle = "yellow";
-                ctx.fillRect(thingX + Math.sin(angle / 180 * 3.14159) * roomWidth / 4, thingY + Math.cos(angle / 180 * 3.14159) * roomWidth / 4, wheel, wheel);
+                let angle = i * (360 / (gameClient.position.things.length + persons.length));
+
+                if (i < gameClient.position.things.length)
+                {
+                    ctx.fillStyle = "yellow";
+                    ctx.fillRect(thingX + Math.sin(angle / 180 * 3.14159) * roomWidth / 4, thingY + Math.cos(angle / 180 * 3.14159) * roomWidth / 4, wheel, wheel);
+                }
+                else
+                {
+                    ctx.fillStyle = "red";
+                    ctx.fillRect(thingX + Math.sin(angle / 180 * 3.14159) * roomWidth / 4, thingY + Math.cos(angle / 180 * 3.14159) * roomWidth / 4, wheel, wheel);
+                }
             }
         }
     });
