@@ -10,17 +10,6 @@ img
 	image-rendering: optimizeSpeed;
 }
 
-p
-{
-	font-family: Tahoma, serif;
-	font-weight: bold;
-	font-size: 11pt;
-	color: white;
-	position: absolute;
-	top: -5px;
-	left: 12px;
-}
-
 #windows
 {
 	display: grid;
@@ -45,6 +34,31 @@ p
 	position: absolute;
 	top: 36px;
 	left: 5px;
+}
+
+#screen_title, #map_title
+{
+	font-family: Tahoma, serif;
+	font-weight: bold;
+	font-size: 11pt;
+	color: white;
+	position: absolute;
+	top: -5px;
+	left: 12px;
+}
+
+#map_description
+{
+	font-family: Tahoma, serif;
+	font-weight: bold;
+	font-size: 11pt;
+	text-align: center;
+	-webkit-text-stroke: 1px black;
+	width: 480px;
+	color: white;
+	position: relative;
+	top: -45px;
+	z-index: 2;
 }
 
 #map

@@ -207,6 +207,12 @@ export function setRoomTitle(title)
     screenTitle.textContent = `maze.exe - ${title}`;
 }
 
+export function setRoomDescription(description)
+{
+    const mapDescription = document.getElementById("map_description");
+    mapDescription.textContent = description;
+}
+
 export async function getTextureById(id) {
     for (let i = 0; i < textures.length; i++) {
         if (textures[i].id === id) return textures[i].tex;

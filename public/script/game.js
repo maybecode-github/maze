@@ -1,7 +1,7 @@
 import {Room} from '../entity/Room.js';
 import {updatePlayer} from "./controls.js";
 import {gameClient} from "../client/GameClient.js";
-import {loadTextures, renderFrame, setRoomTitle} from "./render.js";
+import {loadTextures, renderFrame, setRoomDescription, setRoomTitle} from "./render.js";
 import {renderInventory} from "./inventory.js";
 import {renderMap} from "./map.js";
 import {positionPlayerInCenterOfRoom} from "./generator.js";
@@ -29,6 +29,7 @@ async function load() {
     rooms.push(new Room(30, 30, 11, position));
     positionPlayerInCenterOfRoom(30, 30, 11, 0, -3);
     setRoomTitle(position.name);
+    setRoomDescription(position.description);
     updateInterval = window.setInterval(update, deltaTime * 1000);
 }
 

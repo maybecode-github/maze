@@ -1,7 +1,7 @@
 import {location, rooms} from "./game.js";
 import {gameClient} from "../client/GameClient.js";
 import {generateRoomInDirection} from "./generator.js";
-import {setRoomTitle} from "./render.js";
+import {setRoomDescription, setRoomTitle} from "./render.js";
 
 function getCurrentRoom() {
     for (let room of rooms) {
@@ -51,6 +51,7 @@ export async function switchRoom(direction) {
     gameClient.positionClient.getPosition().then(position => {
         generateRoomInDirection(position, direction);
         setRoomTitle(position.name);
+        setRoomDescription(position.description);
     });
 }
 
