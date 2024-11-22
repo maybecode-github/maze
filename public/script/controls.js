@@ -6,6 +6,7 @@ import {closestItem} from "./render.js";
 
 window.addEventListener("keydown", keydown);
 window.addEventListener("keyup", keyup);
+window.addEventListener("wheel", mousewheel)
 
 const walkSpeed = 10;
 const strafeSpeed = 5;
@@ -14,7 +15,14 @@ const runMultiplier = 2;
 
 let keys = {};
 let messageTimeout;
+export let wheel = 5;
 export let wrongKey;
+
+async function mousewheel(event)
+{
+    wheel -= event.deltaY / 102;
+    wheel = Math.max(Math.min(wheel, 10), 1);
+}
 
 async function keydown(event) {
     const keyCode = event.key.toLowerCase();
@@ -110,7 +118,7 @@ async function keyup(event) {
     keys[event.key.toLowerCase()] = false;
 }
 
-async function updatePlayer() {
+export async function updatePlayer() {
     const run = keys["shift"] ? runMultiplier : 1;
     const currentRoom = getCurrentRoom();
 
@@ -179,5 +187,3 @@ async function setWrongKeyTimeout() {
         wrongKey = false;
     }, 1000);
 }
-
-export {updatePlayer};

@@ -176,12 +176,16 @@ export async function loadTextures() {
     textures.push({"id": 50, "name": "item-generic", "tex": await loadTexture("./image/item-generic.webp", 0.25)});
     textures.push({"id": 51, "name": "blume", "tex": await loadTexture("./image/flower.webp", 0.25)});
     textures.push({"id": 52, "name": "schlüssel", "tex": await loadTexture("./image/item-key.webp", 0.25)});
+    textures.push({"id": 53, "name": "ring", "tex": await loadTexture("./image/item-ring.webp", 0.25)});
+    textures.push({"id": 54, "name": "krone", "tex": await loadTexture("./image/item-crown.webp", 0.25)});
     //items in inventory
     textures.push({"id": 100, "name": "inv-slot", "tex": await loadTexture("./image/inv-slot.webp", 1)});
     textures.push({"id": 101, "name": "inv-slot-selected", "tex": await loadTexture("./image/inv-slot-selected.webp", 1)});
     textures.push({"id": 102, "name": "item-generic", "tex": await loadTexture("./image/item-generic.webp", 0.8)});
     textures.push({"id": 103, "name": "blume", "tex": await loadTexture("./image/flower.webp", 0.8)});
     textures.push({"id": 104, "name": "schlüssel", "tex": await loadTexture("./image/item-key.webp", 0.8)});
+    textures.push({"id": 105, "name": "ring", "tex": await loadTexture("./image/item-ring.webp", 0.8)});
+    textures.push({"id": 106, "name": "krone", "tex": await loadTexture("./image/item-crown.webp", 0.8)});
     //characters
     textures.push({"id": 200, "name": "character", "tex": await loadTexture("./image/character.webp", 0.8)});
 }
@@ -368,7 +372,7 @@ export async function renderFrame() {
                 if (wrongKey) {
                     displayMessage("Verschlossen.\nDas ist der falsche Schlüssel!");
                 } else {
-                    displayMessage("Verschlossen.\nSchlüssel benötigt!\n[G] - aufschließen/abschließen");
+                    displayMessage("Verschlossen.\nSchlüssel benötigt!\n[G] - aufschließen");
                 }
             } else {
                 if (!passable.door.closable) {
@@ -378,7 +382,7 @@ export async function renderFrame() {
                 if (passable.door.open) {
                     displayMessage("Tür offen.\n[E] - schließen\n[F] - betreten");
                 } else {
-                    displayMessage("Tür geschlossen.\n[E] - öffnen");
+                    displayMessage("Tür geschlossen.\n[E] - öffnen\n[G] - abschließen");
                 }
             }
         });

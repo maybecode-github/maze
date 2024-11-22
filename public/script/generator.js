@@ -44,5 +44,4 @@ export function positionPlayerInCenterOfRoom(roomX, roomY, roomSize, deltaX, del
     location.playerX = roomX + 1 + deltaX + (roomSize / 2);
     location.playerY = roomY + 1 + deltaY + (roomSize / 2);
     location.playerA = Math.atan2(-deltaX, -deltaY);
-    console.log(Math.atan2(deltaY, deltaX) / 3.14159 * 180);
 }
